@@ -20,6 +20,9 @@ public class MateriaPrima {
     public void consumir(double quantidadeDemandada) {
         if (quantidadeDemandada <= this.quantidade) {
             this.quantidade -= quantidadeDemandada;
+            if (this.quantidade < this.quantidadeMinima) {
+                System.out.println("O estoque de " + this.nome + "está abaixo do recomendado");
+            }
         } else {
             System.out.println("Ops! Não há borracha suficiente para moldar mais patinhos. Estoque atual de "
                     + this.nome + ": " + this.quantidade + this.unidade);
