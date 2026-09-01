@@ -18,9 +18,21 @@ public class MateriaPrima {
 
     // Reduz o estoque quando a borracha é usada para moldar um pato
     public void consumir(double quantidadeDemandada) {
+        if (quantidadeDemandada <= 0) {
+            System.out.println("A quantidade consumida deve ser maior que 0.");
+            return;
+        }
+
         if (quantidadeDemandada <= this.quantidade) {
             this.quantidade -= quantidadeDemandada;
-        } else {
+    
+
+            if (this.quantidade < this.quantidadeMinima){
+                System.out.println("Atenção! O estoque de " + this.nome + " está abaixo do mínimo.");
+            }
+        } 
+
+        else {
             System.out.println("Ops! Não há borracha suficiente para moldar mais patinhos. Estoque atual de "
                     + this.nome + ": " + this.quantidade + this.unidade);
         }
@@ -49,4 +61,5 @@ public class MateriaPrima {
     public double getQuantidade() {
         return this.quantidade;
     }
+
 }

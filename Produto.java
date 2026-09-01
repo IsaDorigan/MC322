@@ -4,33 +4,30 @@ public class Produto {
     private int id;
     private String nome;
     private String status;                         // ex: "aguardando", "processado", "inspecionado"
-    private double minimomateria; // quanto de borracha esse pato precisa
+    private double quantidadeMateriaPrimaNecessaria; // quanto de borracha esse pato precisa
 
     // CONSTRUTOR
-    public Produto(int id, String nome, double minimomateria) {
+    public Produto(int id, String nome, double quantidadeMateriaPrimaNecessaria) {
         this.id = id;
         this.nome = nome;
-        this.minimomateria = minimomateria;
+        this.quantidadeMateriaPrimaNecessaria = quantidadeMateriaPrimaNecessaria;
         this.status = "aguardando";  // todo pato começa "aguardando" ser fabricado
+    }
 
-    // Fase de processo
+    // Fase de inspeção
+    public void processado() {
         this.status = "processado";
         System.out.println( this.nome + " acabou de sair do molde!");
     }
 
-    // Fase de inspeção
-    public void inspecionar() {
-        this.status = "inspecionado";
-    }
-
     // Define quanto de matéria-prima esse produto precisa
     public void definirDemandaMateriaPrima(double quantidade) {
-        this.minimomateria = quantidade;
+        this.quantidadeMateriaPrimaNecessaria = quantidade;
     }
 
     // GETTERS
     public double getDemandaMateriaPrima() {
-        return this.minimomateria;
+        return this.quantidadeMateriaPrimaNecessaria;
     }
 
     public int getId() {
