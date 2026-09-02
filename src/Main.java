@@ -1,15 +1,14 @@
-import java.util.Scanner;
+import java.util.Scanner; // importa a classe Scanner, que permite ler dados digitados pelo usuário
 
 public class Main {
 
-    
      // ==============================
      // PLANTA INDUSTRIAL
      // =============================
 
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in); // Cria um objeto Scanner para receber informações do usuário
 
         // Matéria-prima disponível na fábrica
         MateriaPrima borracha = new MateriaPrima(
@@ -39,7 +38,10 @@ public class Main {
                 0.6
         );
 
+        // =========================
         // Equipamentos
+        // =========================
+
         Maquina maquina = new Maquina(
                 "Moldadora de Patinhos",
                 50.0
@@ -54,12 +56,12 @@ public class Main {
         // MENU PRINCIPAL
         // ==============================
 
-        int opcao = 0;
+        int opcao = 0; // Armazena a opção escolhida pelo usuário
 
-        while (opcao != 3) {
+        while (opcao != 3) {  // Quando o usuário escolher 3 o programa para
 
             System.out.println("\n========================================");
-            System.out.println("        FÁBRICA DE PATINHOS");
+            System.out.println("         FÁBRICA DE PATINHOS");
             System.out.println("Sua fábrica de patinhos personalizados!");
             System.out.println("========================================");
             System.out.println("Seja bem-vindo à nossa fabrca de patinhos de borracha!");
@@ -72,38 +74,35 @@ public class Main {
             System.out.println("3 - Sair");
             System.out.print("Escolha: ");
 
-            // Garante que a entrada seja numérica
+            // hasNextInt garante que a entrada seja um inteiro
             while (!scanner.hasNextInt()) {
                 System.out.println("[ERRO] Digite apenas números.");
                 scanner.next();
                 System.out.print("Escolha: ");
             }
 
-            opcao = scanner.nextInt();
+            opcao = scanner.nextInt(); // QUando a entrada é um inteiro, scaneia e armazena a opção escolhida
 
 
-            // ==============================
-            // INICIAR PRODUÇÃO
-            // ==============================
+            // ============================
+            // INICIAR PRODUÇÃO - escolha do item a ser produzido
+            // ============================
 
             if (opcao == 1) {
-
                 System.out.println("\nProdutos disponíveis:");
                 System.out.println("1 - " + patoPequeno.getNome() + " (demanda: " + patoPequeno.getDemandaMateriaPrima() + " kg)");
                 System.out.println("2 - " + patoMedio.getNome() + " (demanda: " + patoMedio.getDemandaMateriaPrima() + " kg)");
                 System.out.println("3 - " + patoGrande.getNome() + " (demanda: " + patoGrande.getDemandaMateriaPrima() + " kg)");
 
-                System.out.print("\n");
-                System.out.print("Selecione o produto: ");
+                System.out.print("\nSelecione o produto: ");
 
                 while (!scanner.hasNextInt()) {
                     System.out.println("[ERRO] Digite apenas números.");
-                    scanner.next();
+                    scanner.next(); // Descarta a entrada inválida
                     System.out.print("Selecione o produto: ");
                 }
 
                 int escolhaProduto = scanner.nextInt();
-
                 Produto produto;
 
                 if (escolhaProduto == 1) {
@@ -112,14 +111,15 @@ public class Main {
                     produto = patoMedio;
                 } else if (escolhaProduto == 3) {
                     produto = patoGrande;
-                } else {
+                } 
+                else {
                     System.out.println("[ERRO] Produto inválido.");
                     continue;
                 }
 
 
                 // ==============================
-                // DEMANDA
+                // DEMANDA - quanto de matéria prima o usuário quer usar na produção
                 // ==============================
 
                 System.out.print("Informe a demanda de matéria-prima (kg)(não use . para decimais): ");
@@ -131,6 +131,7 @@ public class Main {
                 }
 
                 double demanda = scanner.nextDouble();
+
                 if (demanda <= 0) {
                     System.out.println("[ERRO] A demanda deve ser maior que zero.");
                     continue;
@@ -139,7 +140,7 @@ public class Main {
 
 
                 // ==============================
-                // VERIFICAÇÕES
+                // VERIFICAÇÕES - verifica disponibilidade de material e capacidade da esteira para a quantidade demandada
                 // ==============================
 
                 System.out.println("[OK] Verificando disponibilidade de matéria-prima...");
@@ -158,7 +159,7 @@ public class Main {
 
 
                 // ==============================
-                // PRODUÇÃO
+                // PRODUÇÃO - linha de produção dos patinhos
                 // ==============================
 
                 esteira.ligar();
@@ -166,7 +167,7 @@ public class Main {
                 esteira.adicionarItem(borracha);
                 esteira.removerItem();
 
-                System.out.println("[OK] Matéria-prima transportada até a máquina.");
+                System.out.println("[OK] " + borracha.getNome() + " transportada até a máquina.");
 
                 // Máquina processa a matéria-prima
                 Produto produtoProcessado = maquina.processar(borracha, produto, demanda);
@@ -176,13 +177,10 @@ public class Main {
                 Object produtoNaInspecao = esteira.removerItem(); // remove o item e cria o objeto produtoNaInspecao
 
                 System.out.println("[OK] " + produto.getNome() + " transportado para inspeção.");
-               
-
                 
                 // Liga a estação de inspeção e inspeciona produtos
                 inspecao.ativar();
                 inspecao.inspecionar((Produto) produtoNaInspecao);
-            
 
                 // Desliga os equipamentos e finaliza a produção
                 maquina.desligar();
@@ -219,7 +217,7 @@ public class Main {
             } 
         }
 
-        scanner.close();
+        scanner.close(); // Fecha o scanner pois não o utilizamos mais
     }
 
 }
