@@ -14,6 +14,8 @@ public class Esteira {
         this.numero = numero;
     }
 
+    // oi 
+    
     // MÉTODOS
 
     public void ligar() {
