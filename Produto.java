@@ -17,7 +17,7 @@ public class Produto {
     // Fase de inspeção
     public void processado() {
         this.status = "processado";
-        System.out.println( this.nome + " acabou de sair do molde!");
+        System.out.println("[OK] " + this.nome + " acabou de sair do molde!");
     }
 
     // Define quanto de matéria-prima esse produto precisa

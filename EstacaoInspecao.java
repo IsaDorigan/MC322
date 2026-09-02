@@ -37,8 +37,7 @@ public class EstacaoInspecao {
 
         produtosInspecionados++;
 
-        System.out.println("[OK] Produto " + produto.getId()
-                + " aprovado na inspeção.");
+        System.out.println("[OK] " + produto.getNome() + " aprovado na inspeção!");
     }
 
     // Retorna a quantidade de produtos inspecionados

@@ -47,11 +47,10 @@ public class Maquina {
         // Consome a matéria-prima
         materiaPrima.consumir(demanda);
 
-        // Inspeciona o produto
-        produto.processado();
+        System.out.println("[OK] Máquina processando " + demanda + " Kg de " + materiaPrima.getNome() + "...");
 
-        // System.out.println("[OK] Máquina processando " + demanda
-        //         + " de " + materiaPrima.getNome() + "...");
+        // Finaliza o processo do produto
+        produto.processado();
 
         return produto;
     }
