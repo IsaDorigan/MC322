@@ -41,7 +41,6 @@ public class EstacaoInspecao {
         produtosInspecionados++;
     }
 
-    
     public int getTotalInspecionados() {
         return produtosInspecionados;
     }

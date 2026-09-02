@@ -34,7 +34,7 @@ public class MateriaPrima {
         } 
         
         else {
-            System.out.println("Ops! Não há borracha suficiente para moldar mais patinhos. Estoque atual de "
+            System.out.println("[ERRO] Ops! Não há borracha suficiente para moldar mais patinhos. Estoque atual de "
                     + this.nome + ": " + this.quantidade + this.unidade);
         }
     }

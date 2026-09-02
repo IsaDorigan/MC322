@@ -17,13 +17,13 @@ public class Maquina {
     // Liga a máquina
     public void ligar() {
         ligada = true;
-        System.out.println("[OK] Máquina ligada.");
+        System.out.println("[OK] " + getNome() + " ligada.");
     }
 
     // Desliga a máquina
     public void desligar() {
         ligada = false;
-        System.out.println("[OK] Máquina desligada.");
+        System.out.println("[OK] " + getNome() + " desligada.");
     }
 
     // Processa a matéria-prima
@@ -31,13 +31,13 @@ public class Maquina {
 
         // Verifica se a máquina esta ligada
         if (!ligada) { //Se ligada=false, !ligada=true, e assim entramos no if
-            System.out.println("[ERRO] A máquina está desligada.");
+            System.out.println("[ERRO] A " + getNome() + " está desligada.");
             return null;
         }
 
         // Verifica se a demanda não ultrapassa a capacidade da máquina
         if (demanda > capacidadeMaxima) {
-            System.out.println("[ERRO] A demanda ultrapassa a capacidade máxima da máquina.");
+            System.out.println("[ERRO] A demanda ultrapassa a capacidade máxima da " + getNome());
             return null;
         }
 
@@ -50,12 +50,16 @@ public class Maquina {
         // Sempre que processamos um produto, devemos consumir matéria prima
         materiaPrima.consumir(demanda);
 
-        System.out.println("[OK] Máquina processando " + demanda + " Kg de " + materiaPrima.getNome() + "...");
+        System.out.println("[OK] " + getNome() + " processando " + demanda + " Kg de " + materiaPrima.getNome() + "...");
 
         // Finaliza o processo do produto, marcando-o como processado
         produto.processado();
 
         return produto;
+    }
+
+    public boolean verificarCapacidadeMaquina(double demanda) {
+        return demanda <= capacidadeMaxima;
     }
 
     // GETTERS

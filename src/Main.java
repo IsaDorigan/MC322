@@ -38,6 +38,7 @@ public class Main {
                 0.6
         );
 
+
         // =========================
         // Equipamentos
         // =========================
@@ -47,9 +48,11 @@ public class Main {
                 50.0
         );
 
-        Esteira esteira = new Esteira(50.0);
+        Esteira esteira1 = new Esteira(60, 1);
+        Esteira esteira2 = new Esteira(50,2);
 
         EstacaoInspecao inspecao = new EstacaoInspecao();
+
 
 
         // ==============================
@@ -64,14 +67,17 @@ public class Main {
             System.out.println("         FÁBRICA DE PATINHOS");
             System.out.println("Sua fábrica de patinhos personalizados!");
             System.out.println("========================================");
-            System.out.println("Seja bem-vindo à nossa fabrca de patinhos de borracha!");
+            System.out.println("Seja bem-vindo à nossa fabrica de patinhos de borracha!");
             System.out.println("Aqui você pode acompanhar toda a nossa produção de patinhos.");
+            System.out.println("\nAqui produzimos patinhos em 3 tamanhos:");
+            System.out.println("Pequeno(300g), médio(450g) e grande(600g).");
+            System.out.println("Nossos patinhos são feitos totalmente de borracha!");
             System.out.println("\nDesenvolvido por : Isadora Kluge Dorigan e Guilherme Forte Silva");
 
             System.out.println("========================================");
             System.out.println("1 - Iniciar produção");
             System.out.println("2 - Consultar estoque");
-            System.out.println("3 - Sair");
+            System.out.println("3 - Sair\n");
             System.out.print("Escolha: ");
 
             // hasNextInt garante que a entrada seja um inteiro
@@ -79,9 +85,10 @@ public class Main {
                 System.out.println("[ERRO] Digite apenas números.");
                 scanner.next();
                 System.out.print("Escolha: ");
-            }
+            }        
 
             opcao = scanner.nextInt(); // QUando a entrada é um inteiro, scaneia e armazena a opção escolhida
+
 
 
             // ============================
@@ -140,7 +147,7 @@ public class Main {
 
 
                 // ==============================
-                // VERIFICAÇÕES - verifica disponibilidade de material e capacidade da esteira para a quantidade demandada
+                // VERIFICAÇÕES - verifica disponibilidade de material e capacidade da esteira e maquina para a quantidade demandada
                 // ==============================
 
                 System.out.println("[OK] Verificando disponibilidade de matéria-prima...");
@@ -150,8 +157,18 @@ public class Main {
                     continue;
                 }
 
-                if (!esteira.verificarCapacidade(demanda)) {
-                    System.out.println("[ERRO] A demanda ultrapassa a capacidade da esteira.");
+                if (!esteira1.verificarCapacidade(demanda)) {
+                    System.out.println("[ERRO] A demanda ultrapassa a capacidade da esteira" + esteira1.getNumero());
+                    continue;
+                }
+
+                if (!esteira2.verificarCapacidade(demanda)) {
+                    System.out.println("[ERRO] A demanda ultrapassa a capacidade da esteira" + esteira2.getNumero());
+                    continue;
+                }
+
+                if (!maquina.verificarCapacidadeMaquina(demanda)) {
+                    System.out.println("[ERRO] A demanda ultrapassa a capacidade máxima da " + maquina.getNome());
                     continue;
                 }
 
@@ -162,29 +179,33 @@ public class Main {
                 // PRODUÇÃO - linha de produção dos patinhos
                 // ==============================
 
-                esteira.ligar();
+                esteira1.ligar();
+                esteira2.ligar();
                 maquina.ligar();
-                esteira.adicionarItem(borracha);
-                esteira.removerItem();
+                inspecao.ativar();
+                esteira1.adicionarItem(borracha);
+                esteira1.caminhoEsteira();
+                esteira1.removerItem();
 
-                System.out.println("[OK] " + borracha.getNome() + " transportada até a máquina.");
+                System.out.println("[OK] " + borracha.getNome() + " transportada até a " + maquina.getNome());
 
                 // Máquina processa a matéria-prima
                 Produto produtoProcessado = maquina.processar(borracha, produto, demanda);
-    
-                // Coloca o produto processado na esteira e o remove após ele ter andado
-                esteira.adicionarItem(produtoProcessado);
-                Object produtoNaInspecao = esteira.removerItem(); // remove o item e cria o objeto produtoNaInspecao
+            
+                // Coloca o produto processado na esteira 2 e o remove após ele ter andado
+                esteira2.adicionarItem(produtoProcessado);
+                esteira2.caminhoEsteira();
+                Object produtoNaInspecao = esteira2.removerItem(); // remove o item e cria o objeto produtoNaInspecao
 
                 System.out.println("[OK] " + produto.getNome() + " transportado para inspeção.");
                 
                 // Liga a estação de inspeção e inspeciona produtos
-                inspecao.ativar();
                 inspecao.inspecionar((Produto) produtoNaInspecao);
 
                 // Desliga os equipamentos e finaliza a produção
+                esteira1.desligar();
+                esteira2.desligar();
                 maquina.desligar();
-                esteira.desligar();
                 inspecao.desativar();
 
                 System.out.println("\n========================================");
@@ -193,6 +214,7 @@ public class Main {
                 System.out.println("Produto: " + produto.getNome());
                 System.out.println("Estoque restante: " + borracha.getQuantidade() + " Kg de " + borracha.getNome());
             }
+
 
 
             // ==============================
@@ -204,6 +226,7 @@ public class Main {
                 System.out.println("\nEstoque de matéria-prima:");
                 System.out.println(borracha.getNome() + ": " + borracha.getQuantidade()+ " kg");
             }
+
 
 
             // ==============================
