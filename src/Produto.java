@@ -3,7 +3,7 @@ public class Produto {
     // ATRIBUTOS
     private int id;
     private String nome;
-    private String status;                           // ex: "aguardando", "processado", "inspecionado"
+    private String status;                         // ex: "aguardando", "processado", "inspecionado"
     private double quantidadeMateriaPrimaNecessaria; // quanto de borracha esse pato precisa
 
     // CONSTRUTOR
@@ -14,9 +14,7 @@ public class Produto {
         this.status = "aguardando";  // todo pato começa "aguardando" ser fabricado
     }
 
-    //MÉTODOS
-
-    // Marca produto como processado
+    // Fase de inspeção
     public void processado() {
         this.status = "processado";
         System.out.println("[OK] " + this.nome + " acabou de sair do molde!");
@@ -28,7 +26,6 @@ public class Produto {
     }
 
     // GETTERS
-
     public double getDemandaMateriaPrima() {
         return this.quantidadeMateriaPrimaNecessaria;
     }
