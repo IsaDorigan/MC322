@@ -5,15 +5,15 @@ public class MateriaPrima {
     private String nome;
     private double quantidade;
     private String unidade;
-    private double quantidadeMinima;
+    private double custoPorUnidade;
 
     // CONSTRUTOR
-    public MateriaPrima(int id, String nome, double quantidade, String unidade, double quantidadeMinima) {
+    public MateriaPrima(int id, String nome, double quantidade, String unidade, double custoPorUnidade) {
         this.id = id;
         this.nome = nome;
         this.quantidade = quantidade;
         this.unidade = unidade;
-        this.quantidadeMinima = quantidadeMinima;
+        this.custoPorUnidade = custoPorUnidade;
     }
 
     // MÉTODOS
@@ -28,7 +28,7 @@ public class MateriaPrima {
 
         if (quantidadeDemandada <= this.quantidade) {
             this.quantidade -= quantidadeDemandada;
-            if (this.quantidade < this.quantidadeMinima) {
+            if (this.quantidade < this.custoPorUnidade) {
                 System.out.println("[ERRO] O estoque de " + this.nome + "está abaixo do recomendado.");
             }
         } 
@@ -39,16 +39,17 @@ public class MateriaPrima {
         }
     }
 
-    // Adiciona borracha ao estoque (chegou um novo carregamento do fornecedor)
+    // Adiciona matéria prima ao estoque
     public void adicionarEstoque(double quantidadeAdicionada) {
         this.quantidade += quantidadeAdicionada;
-        System.out.println("Novo lote de " + this.nome + " recebido! Estoque atualizado para: " + this.quantidade);
+        System.out.println("[OK] Novo lote de " + this.nome + " recebido! Estoque atualizado para: " + this.quantidade);
     }
 
     // Verifica se há borracha suficiente para moldar a quantidade de patinhos pedida
     public boolean verificarDisponibilidade(double demanda) {
         return this.quantidade >= demanda;
     }
+
 
     // GETTERS
     
@@ -62,5 +63,13 @@ public class MateriaPrima {
 
     public double getQuantidade() {
         return this.quantidade;
+    }
+
+    public String getUnidade() {
+        return unidade;
+    }
+
+    public double getCustoPorUnidade() {
+        return custoPorUnidade;
     }
 }

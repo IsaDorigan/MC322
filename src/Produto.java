@@ -1,33 +1,68 @@
-public class Produto {
+public abstract class Produto {
 
     // ATRIBUTOS
     private int id;
     private String nome;
-    private String status;                         // ex: "aguardando", "processado", "inspecionado"
-    private double quantidadeMateriaPrimaNecessaria; // quanto de borracha esse pato precisa
+    private String status;                         
+    private double quantidadeMateriaPrimaPorUnidade; 
+    private double qualidade;
+    private double probabilidadeFalhaAcumulada;
+    private static int totalProdutosFabricados = 0;
 
     // CONSTRUTOR
-    public Produto(int id, String nome, double quantidadeMateriaPrimaNecessaria) {
+    public Produto(int id, String nome, double quantidadeMateriaPrimaPorUnidade, double qualidade) {
         this.id = id;
         this.nome = nome;
-        this.quantidadeMateriaPrimaNecessaria = quantidadeMateriaPrimaNecessaria;
+        this.quantidadeMateriaPrimaPorUnidade = quantidadeMateriaPrimaPorUnidade;
         this.status = "aguardando";  // todo pato começa "aguardando" ser fabricado
+        this.qualidade = qualidade;
+        this.probabilidadeFalhaAcumulada = 0;
+    
     }
 
-    // Fase de inspeção
-    public void processado() {
-        this.status = "processado";
-        System.out.println("[OK] " + this.nome + " acabou de sair do molde!");
+    // MÉTODOS ABSTRATOS
+
+    public abstract void processar();
+    public abstract void processado();
+    public abstract void embalando();
+    public abstract void embalado();
+    public abstract void inspecionando();
+    public abstract void inspecionado();
+
+    public abstract double calcularTempoProducao();
+    
+    public abstract String getTipo();
+
+
+    // MÉTODOS CONCRETOS
+
+    public double getQuantidadeMateriaPrimaPorUnidade() {
+        return this.quantidadeMateriaPrimaPorUnidade;
     }
 
-    // Define quanto de matéria-prima esse produto precisa
-    public void definirDemandaMateriaPrima(double quantidade) {
-        this.quantidadeMateriaPrimaNecessaria = quantidade;
+    public double getQualidade() {
+        return qualidade;
     }
 
-    // GETTERS
-    public double getDemandaMateriaPrima() {
-        return this.quantidadeMateriaPrimaNecessaria;
+    public double getProbabilidadeFalhaAcumulada() {
+        return probabilidadeFalhaAcumulada;
+    }
+
+    public void aumentarProbabilidadeFalha(double aumento) {
+        this.probabilidadeFalhaAcumulada += aumento;
+
+        // Mantém a probabilidade sendo até 100%
+        if (probabilidadeFalhaAcumulada > 1) {
+            probabilidadeFalhaAcumulada = 1;
+        }
+    }
+
+    public void registrarFabricacao() {
+        totalProdutosFabricados++;
+    }
+
+    public static int getTotalProdutosFabricados() {
+        return totalProdutosFabricados;
     }
 
     public int getId() {
@@ -40,5 +75,9 @@ public class Produto {
 
     public String getStatus() {
         return this.status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

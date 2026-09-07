@@ -1,246 +1,233 @@
-import java.util.Scanner; // importa a classe Scanner, que permite ler dados digitados pelo usuário
+import java.util.Scanner;
 
 public class Main {
 
-     // ==============================
-     // PLANTA INDUSTRIAL
-     // =============================
-
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in); // Cria um objeto Scanner para receber informações do usuário
+        Scanner scanner = new Scanner(System.in);
 
-        // Matéria-prima disponível na fábrica
-        MateriaPrima borracha = new MateriaPrima(
-                1,
-                "Borracha",
-                100,
-                " kg",
-                5.0
-        );
+        // ========================================
+        // INTRODUÇÃO
+        // ========================================
 
-        // Produtos disponíveis
-        Produto patoPequeno = new Produto(
-                1,
-                "Pato Pequeno",
-                0.3
-        );
+        System.out.println("\n========================================");
+        System.out.println("       FÁBRICA DE PATINHOS");
+        System.out.println("========================================");
+        System.out.println("\nBem-vindo à fábrica de patinhos de borracha!");
+        System.out.println("Aqui produzimos patinhos pequenos, " + "médios e grandes.");
+        System.out.println("\nDesenvolvido por:");
+        System.out.println("Isadora Kluge Dorigan e Guilherme Forte Silva");
 
-        Produto patoMedio = new Produto(
-                2,
-                "Pato Médio",
-                0.45
-        );
+        // ========================================
+        // MATÉRIA-PRIMA
+        // ========================================
 
-        Produto patoGrande = new Produto(
-                3,
-                "Pato Grande",
-                0.6
-        );
+        MateriaPrima borracha =
+                new MateriaPrima(
+                        1,
+                        "Borracha",
+                        100.0,
+                        "kg",
+                        5.0
+                );
 
+        // ========================================
+        // ESTEIRAS
+        // ========================================
+        Esteira esteira1 = new Esteira(100,1); // Matéria prima até moldagem
+        Esteira esteira2 = new Esteira(100,2); // Produto da moldagem até embalagem
+        Esteira esteira3 = new Esteira(100,3); // embalagem para inspeção
 
-        // =========================
-        // Equipamentos
-        // =========================
+        // ========================================
+        // GERENCIADOR
+        // ========================================
 
-        Maquina maquina = new Maquina(
-                "Moldadora de Patinhos",
-                50.0
-        );
+        double budgetInicial = 1000.0;
 
-        Esteira esteira1 = new Esteira(60, 1);
-        Esteira esteira2 = new Esteira(50,2);
+        GerenciadorProducao gerenciador = new GerenciadorProducao(borracha, budgetInicial, esteira1, esteira2, esteira3);
 
-        EstacaoInspecao inspecao = new EstacaoInspecao();
+        // ========================================
+        // MÁQUINAS
+        // ========================================
 
+        Maquina moldadora = new MaquinaMoldagem();
+        Maquina embaladora = new MaquinaEmbalagem();
+        Maquina inspecao = new MaquinaInspecao();
 
+        gerenciador.adicionarMaquina(moldadora);
+        gerenciador.adicionarMaquina(embaladora);
+        gerenciador.adicionarMaquina(inspecao);
 
-        // ==============================
-        // MENU PRINCIPAL
-        // ==============================
+        // ========================================
+        // MENU
+        // ========================================
 
-        int opcao = 0; // Armazena a opção escolhida pelo usuário
+        int opcao = -1;
 
-        while (opcao != 3) {  // Quando o usuário escolher 3 o programa para
+        while (opcao != 0) {
 
             System.out.println("\n========================================");
-            System.out.println("         FÁBRICA DE PATINHOS");
-            System.out.println("Sua fábrica de patinhos personalizados!");
-            System.out.println("========================================");
-            System.out.println("Seja bem-vindo à nossa fabrica de patinhos de borracha!");
-            System.out.println("Aqui você pode acompanhar toda a nossa produção de patinhos.");
-            System.out.println("\nAqui produzimos patinhos em 3 tamanhos:");
-            System.out.println("Pequeno(300g), médio(450g) e grande(600g).");
-            System.out.println("Nossos patinhos são feitos totalmente de borracha!");
-            System.out.println("\nDesenvolvido por : Isadora Kluge Dorigan e Guilherme Forte Silva");
+            System.out.println("              MENU INICIAL");
+            System.out.println("========================================" );
+            System.out.println("\nATUALIZAR DEMANDAS");
+            System.out.println("1 - Atualizar demanda de Pato Pequeno");
+            System.out.println("2 - Atualizar demanda de Pato Médio");
+            System.out.println("3 - Atualizar demanda de Pato Grande");
+            System.out.println("\nFABRICAR");
+            System.out.println("4 - Fabricar Pato Pequeno");
+            System.out.println("5 - Fabricar Pato Médio");
+            System.out.println("6 - Fabricar Pato Grande");
+            System.out.println("\nCONSULTAR");
+            System.out.println("7 - Ver armazém");
+            System.out.println("8 - Ver estoque de matéria-prima");
+            System.out.println("9 - Ver budget");
+            System.out.println("\nCOMPRAR MATÉRIA-PRIMA");
+            System.out.println("10 - Comprar borracha");
+            System.out.println("\n0 - Sair");
+            System.out.print("\nEscolha: ");
 
-            System.out.println("========================================");
-            System.out.println("1 - Iniciar produção");
-            System.out.println("2 - Consultar estoque");
-            System.out.println("3 - Sair\n");
-            System.out.print("Escolha: ");
 
-            // hasNextInt garante que a entrada seja um inteiro
+            // ====================================
+            // VALIDAÇÃO DA OPÇÃO
+            // ====================================
+
             while (!scanner.hasNextInt()) {
                 System.out.println("[ERRO] Digite apenas números.");
                 scanner.next();
                 System.out.print("Escolha: ");
-            }        
-
-            opcao = scanner.nextInt(); // QUando a entrada é um inteiro, scaneia e armazena a opção escolhida
-
+            }
+            opcao = scanner.nextInt();
 
 
-            // ============================
-            // INICIAR PRODUÇÃO - escolha do item a ser produzido
-            // ============================
+            // ====================================
+            // ATUALIZAR DEMANDA -
+            // ====================================
 
             if (opcao == 1) {
-                System.out.println("\nProdutos disponíveis:");
-                System.out.println("1 - " + patoPequeno.getNome() + " (demanda: " + patoPequeno.getDemandaMateriaPrima() + " kg)");
-                System.out.println("2 - " + patoMedio.getNome() + " (demanda: " + patoMedio.getDemandaMateriaPrima() + " kg)");
-                System.out.println("3 - " + patoGrande.getNome() + " (demanda: " + patoGrande.getDemandaMateriaPrima() + " kg)");
+                int quantidade = lerQuantidade(scanner, "Pato Pequeno");
+                gerenciador.atualizarDemanda("Pato Pequeno", quantidade);
+            } 
 
-                System.out.print("\nSelecione o produto: ");
-
-                while (!scanner.hasNextInt()) {
-                    System.out.println("[ERRO] Digite apenas números.");
-                    scanner.next(); // Descarta a entrada inválida
-                    System.out.print("Selecione o produto: ");
-                }
-
-                int escolhaProduto = scanner.nextInt();
-                Produto produto;
-
-                if (escolhaProduto == 1) {
-                    produto = patoPequeno;
-                } else if (escolhaProduto == 2) {
-                    produto = patoMedio;
-                } else if (escolhaProduto == 3) {
-                    produto = patoGrande;
-                } 
-                else {
-                    System.out.println("[ERRO] Produto inválido.");
-                    continue;
-                }
+            else if (opcao == 2) {
+                int quantidade = lerQuantidade(scanner, "Pato Médio");
+                gerenciador.atualizarDemanda("Pato Médio",quantidade);
+            } 
+            else if (opcao == 3) {
+                int quantidade = lerQuantidade(scanner,"Pato Grande");
+                gerenciador.atualizarDemanda("Pato Grande",quantidade);
+            }
 
 
-                // ==============================
-                // DEMANDA - quanto de matéria prima o usuário quer usar na produção
-                // ==============================
+            // ====================================
+            // FABRICAR PATOS
+            // ====================================
 
-                System.out.print("Informe a demanda de matéria-prima (kg)(não use . para decimais): ");
+            else if (opcao == 4) {
+                gerenciador.fabricarDemanda("Pato Pequeno");
+            } 
+
+            else if (opcao == 5) {
+                gerenciador.fabricarDemanda("Pato Médio");
+            } 
+            
+            else if (opcao == 6) {
+                gerenciador.fabricarDemanda("Pato Grande");
+            }
+
+
+            // ====================================
+            // ARMAZÉM
+            // ====================================
+
+            else if (opcao == 7) {
+                gerenciador.exibirArmazem();
+            }
+
+
+            // ====================================
+            // ESTOQUE
+            // ====================================
+            
+            else if (opcao == 8) {
+                gerenciador.exibirEstoqueMateriaPrima();
+            }
+
+
+            // ====================================
+            // BUDGET
+            // ====================================
+
+            else if (opcao == 9) {
+                gerenciador.exibirBudget();
+            }
+
+
+            // ====================================
+            // COMPRAR MATÉRIA-PRIMA
+            // ====================================
+
+            else if (opcao == 10) {
+
+                System.out.print("Informe a quantidade de borracha (kg): ");
 
                 while (!scanner.hasNextDouble()) {
                     System.out.println("[ERRO] Digite apenas números.");
                     scanner.next();
-                    System.out.print("Informe a demanda de matéria-prima (kg)(não use . para decimais): ");
+                    System.out.print("Informe a quantidade de borracha (kg): ");
                 }
 
-                double demanda = scanner.nextDouble();
+                double quantidade = scanner.nextDouble();
+                gerenciador.comprarMateriaPrima(quantidade);
+             }
 
-                if (demanda <= 0) {
-                    System.out.println("[ERRO] A demanda deve ser maior que zero.");
-                    continue;
-                }
-                System.out.print("\n");
-
-
-                // ==============================
-                // VERIFICAÇÕES - verifica disponibilidade de material e capacidade da esteira e maquina para a quantidade demandada
-                // ==============================
-
-                System.out.println("[OK] Verificando disponibilidade de matéria-prima...");
-
-                if (!borracha.verificarDisponibilidade(demanda)) {
-                    System.out.println("[ERRO] Matéria-prima insuficiente.");
-                    continue;
-                }
-
-                if (!esteira1.verificarCapacidade(demanda)) {
-                    System.out.println("[ERRO] A demanda ultrapassa a capacidade da esteira" + esteira1.getNumero());
-                    continue;
-                }
-
-                if (!esteira2.verificarCapacidade(demanda)) {
-                    System.out.println("[ERRO] A demanda ultrapassa a capacidade da esteira" + esteira2.getNumero());
-                    continue;
-                }
-
-                if (!maquina.verificarCapacidadeMaquina(demanda)) {
-                    System.out.println("[ERRO] A demanda ultrapassa a capacidade máxima da " + maquina.getNome());
-                    continue;
-                }
-
-                System.out.println("[OK] Matéria-prima disponível.\n");
-
-
-                // ==============================
-                // PRODUÇÃO - linha de produção dos patinhos
-                // ==============================
-
-                esteira1.ligar();
-                esteira2.ligar();
-                maquina.ligar();
-                inspecao.ativar();
-                esteira1.adicionarItem(borracha);
-                esteira1.caminhoEsteira();
-                esteira1.removerItem();
-
-                System.out.println("[OK] " + borracha.getNome() + " transportada até a " + maquina.getNome());
-
-                // Máquina processa a matéria-prima
-                Produto produtoProcessado = maquina.processar(borracha, produto, demanda);
-            
-                // Coloca o produto processado na esteira 2 e o remove após ele ter andado
-                esteira2.adicionarItem(produtoProcessado);
-                esteira2.caminhoEsteira();
-                Object produtoNaInspecao = esteira2.removerItem(); // remove o item e cria o objeto produtoNaInspecao
-
-                System.out.println("[OK] " + produto.getNome() + " transportado para inspeção.");
-                
-                // Liga a estação de inspeção e inspeciona produtos
-                inspecao.inspecionar((Produto) produtoNaInspecao);
-
-                // Desliga os equipamentos e finaliza a produção
-                esteira1.desligar();
-                esteira2.desligar();
-                maquina.desligar();
-                inspecao.desativar();
-
-                System.out.println("\n========================================");
-                System.out.println("     PRODUÇÃO CONCLUÍDA COM SUCESSO!");
-                System.out.println("========================================");
-                System.out.println("Produto: " + produto.getNome());
-                System.out.println("Estoque restante: " + borracha.getQuantidade() + " Kg de " + borracha.getNome());
-            }
-
-
-
-            // ==============================
-            // CONSULTAR ESTOQUE
-            // ==============================
-
-            else if (opcao == 2) {
-
-                System.out.println("\nEstoque de matéria-prima:");
-                System.out.println(borracha.getNome() + ": " + borracha.getQuantidade()+ " kg");
-            }
-
-
-
-            // ==============================
+            // ====================================
             // SAIR
-            // ==============================
+            // ====================================
 
-            else if (opcao == 3) {
-                System.out.println("");
-                System.out.println("Encerrando a fábrica...");
+            else if (opcao == 0) {
+                System.out.println("\nEncerrando a fábrica...");
                 System.out.println("Até a próxima!");
-            } 
+            }
+
+            // ====================================
+            // OPÇÃO INVÁLIDA
+            // ====================================
+
+            else {
+                System.out.println("[ERRO] Opção inválida.");
+            }
         }
 
-        scanner.close(); // Fecha o scanner pois não o utilizamos mais
+        scanner.close();
     }
 
+    // ============================================
+    // LÊ QUANTIDADE DE PRODUTOS
+    // ============================================
+
+    private static int lerQuantidade(Scanner scanner,String nomeProduto) {
+        System.out.print("Informe a quantidade de " + nomeProduto + " desejada: ");
+
+        while (!scanner.hasNextInt()) {
+            System.out.println("[ERRO] Digite apenas números inteiros.");
+            scanner.next();
+            System.out.print("Informe a quantidade de " + nomeProduto + " desejada: ");
+        }
+
+        int quantidade = scanner.nextInt();
+
+        while (quantidade < 0) {
+            System.out.println("[ERRO] A quantidade não pode ser negativa.");
+            System.out.print("Informe novamente: ");
+
+            while (!scanner.hasNextInt()) {
+                System.out.println("[ERRO] Digite apenas números inteiros.");
+                scanner.next();
+            }
+
+            quantidade = scanner.nextInt();
+        }
+
+        return quantidade;
+    }
 }
