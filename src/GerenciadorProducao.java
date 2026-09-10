@@ -46,7 +46,7 @@ public class GerenciadorProducao {
     // ATUALIZAR DEMANDA
     public void atualizarDemanda(String tipoProduto, int quantidade) {
         for (Demanda demanda : demandas) { // Para cada Demanda existente dentro da lista demandas, chame de demanda
-            if (demanda.getTipoProduto().equals(tipoProduto)) { // Verifica se o tipo dessa demanda é igual ao tipi de produto pedido pelo usuário
+            if (demanda.getTipoProduto().equals(tipoProduto)) { // Verifica se o tipo dessa demanda é igual ao tipo de produto pedido pelo usuário
                 demanda.atualizarQuantidade(quantidade);
                 System.out.println("[OK] Demanda de "+ tipoProduto + " atualizada para " + quantidade + " unidade(s).");
 

@@ -13,8 +13,6 @@ public class Esteira {
         this.item = null;
         this.numero = numero;
     }
-
-    // oi 
     
     // MÉTODOS
 
@@ -42,7 +40,7 @@ public class Esteira {
         this.item = item;
 
         // Verifica se é produto ou matéria prima antes de colocar na esteira
-        if (item instanceof Produto) {                                                  // se item fo da classe Produto
+        if (item instanceof Produto) {                                                  // se item for da classe Produto
             Produto produto = (Produto) item;                                           // cria uma variável produto de classe Produto, e redeclaramos item como Produto (cast)
             System.out.println("[OK] " + produto.getNome() + " colocado na esteira " + this.numero + ".");  // pega o nome do produto (item) e faz um print
         }                                                                               // precisamos fazer isso pois item é inicialmente declarado como Object
