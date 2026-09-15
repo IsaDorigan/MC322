@@ -25,3 +25,11 @@ que deu origem ao projeto.
 
 É uma visão que ainda estamos amadurecendo entre nós, mas a essência já está definida: começar com algo simples e afetivo, 
 os patinhos de borracha, e deixar a fábrica crescer até produzir várias linhas completas de colecionáveis!
+
+3. Atualizações
+--------------------------------------
+
+Nesta etapa da atividade demos um foco maior em organizar e facilitar a montagem de nossos produtos, adicionando máquinas
+separadas para funcões específicas, como a moldagem e a embalagem, além disso separamos os produtos em 3 tamanhos diferentes
+(Grande, médio e pequeno) para dar um maior leque de opções para os clientes, também foi criada uma classe (GerenciadorProdução)
+para gerenciar e coordenar todo o processo produtivo, controlando, demandas, máquinas, esteiras e etc. 

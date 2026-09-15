@@ -45,7 +45,7 @@ public abstract class Maquina {
     }
 
     protected boolean verificarFalha() {
-        double aleatorio = random.nextDouble(); // Gera um numero aleatório
+        double aleatorio = random.nextDouble(); // Gera um número aleatório
         return aleatorio < probabilidadeFalha;  // Se esse número for menor que a probabilidade, então falha
                                                 // Simulamos uma "região" onde essa falha ocorre, que vai de 0 até probabilidadeFalha
     }
