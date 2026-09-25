@@ -1,42 +1,33 @@
 public class MaquinaEmbalagem extends Maquina {
 
-    // Chance de aumentar a probabilidade de falha
-    private static final double CHANCE_AUMENTAR_FALHA = 0.15;
+    // Chance da embalagem aumentar o risco de falha do produto, e quanto aumenta
+    private static final double CHANCE_AUMENTAR_RISCO = 0.15;
+    private static final double AUMENTO_RISCO = 0.15;
 
-    public MaquinaEmbalagem() {
-        super(
-                "Embaladora de Patinhos",
+    public MaquinaEmbalagem(Cenario cenario) {
+        super("Embaladora de Patinhos",
                 50.0,
-                0.0,
-                10.0
-        );
+                0.03,
+                10.0,
+                cenario);
     }
 
     @Override
-    public Produto processar(Produto produto) {
-
-        if (!estaLigada()) { 
-            System.out.println("[ERRO] A embaladora está desligada.");
-            return null;
-        }
-
-        if (produto == null) {
-            System.out.println("[ERRO] Produto inexistente.");
-            return null;
-        }
-
+    protected Produto executarProcessamento(Produto produto) {
         System.out.println("[OK] Embalando " + produto.getNome() + "...");
 
-        produto.setStatus("embalado");
-        System.out.println("[OK] " + produto.getNome() + " embalado.");
+        produto.embalando();
+        produto.embalado();
 
-        // A máquina não falha diretamente, ela pode aumentar a chance de falha do produto.
-        if (Math.random() < CHANCE_AUMENTAR_FALHA) {
-            produto.aumentarProbabilidadeFalha(0.15);
-            System.out.println("[AVISO] A embalagem aumentou a probabilidade de falha.");
-        }
+        possivelmenteAumentarRisco(produto, CHANCE_AUMENTAR_RISCO, AUMENTO_RISCO,
+                "A embalagem aumentou a probabilidade de falha.");
 
         return produto;
+    }
+
+    @Override
+    protected String getMensagemFalha() {
+        return "Quá! A embaladora enrolou o plástico-bolha e o patinho foi amassado!";
     }
 
     @Override

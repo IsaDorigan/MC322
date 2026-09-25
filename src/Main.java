@@ -1,233 +1,110 @@
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Main {
 
+    private static final double RESERVA_MINIMA_BORRACHA = 5.0;  // kg que nunca podem ser consumidos
+    private static final double PRECO_BORRACHA_POR_KG = 5.0;
+
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
+        try (Scanner scanner = new Scanner(System.in)) {
+            EntradaConsole entrada = new EntradaConsole(scanner);
 
-        // ========================================
-        // INTRODUÇÃO
-        // ========================================
+            // Banner de boas-vindas: impresso UMA vez, antes do menu
+            imprimirBoasVindas();
 
-        System.out.println("\n========================================");
-        System.out.println("       FÁBRICA DE PATINHOS");
-        System.out.println("========================================");
-        System.out.println("\nBem-vindo à fábrica de patinhos de borracha!");
-        System.out.println("Aqui produzimos patinhos pequenos, " + "médios e grandes.");
-        System.out.println("\nDesenvolvido por:");
-        System.out.println("Isadora Kluge Dorigan e Guilherme Forte Silva");
+            // ========================================
+            // SEMENTE E CENÁRIO (escolhidos no início)
+            // ========================================
+            configurarSemente(entrada);
+            Cenario cenario = escolherCenario(entrada);
 
-        // ========================================
-        // MATÉRIA-PRIMA
-        // ========================================
+            // ========================================
+            // MATÉRIA-PRIMA E ESTEIRAS
+            // ========================================
+            MateriaPrima borracha = new MateriaPrima(
+                    1,
+                    "Borracha",
+                    cenario.getEstoqueInicialBorracha(),
+                    "kg",
+                    PRECO_BORRACHA_POR_KG,
+                    RESERVA_MINIMA_BORRACHA
+            );
 
-        MateriaPrima borracha =
-                new MateriaPrima(
-                        1,
-                        "Borracha",
-                        100.0,
-                        "kg",
-                        5.0
-                );
+            Esteira esteira1 = new Esteira(100, 1); // Matéria prima até moldagem
+            Esteira esteira2 = new Esteira(100, 2); // Produto da moldagem até embalagem
+            Esteira esteira3 = new Esteira(100, 3); // embalagem para inspeção
 
-        // ========================================
-        // ESTEIRAS
-        // ========================================
-        Esteira esteira1 = new Esteira(100,1); // Matéria prima até moldagem
-        Esteira esteira2 = new Esteira(100,2); // Produto da moldagem até embalagem
-        Esteira esteira3 = new Esteira(100,3); // embalagem para inspeção
+            // ========================================
+            // ESTRATÉGIAS (só o Main conhece as classes concretas)
+            // ========================================
+            List<EstrategiaProducao> estrategias = List.of(
+                    new EstrategiaFilaIndiana(),
+                    new EstrategiaRevoadaGigante(),
+                    new EstrategiaNinhadaCheia()
+            );
 
-        // ========================================
-        // GERENCIADOR
-        // ========================================
+            // ========================================
+            // GERENCIADOR E MÁQUINAS (na ordem da linha de produção)
+            // ========================================
+            GerenciadorProducao gerenciador = new GerenciadorProducao(
+                    borracha, cenario, esteira1, esteira2, esteira3, estrategias.get(0));
 
-        double budgetInicial = 1000.0;
+            gerenciador.adicionarMaquina(new MaquinaMoldagem(cenario));
+            gerenciador.adicionarMaquina(new MaquinaEmbalagem(cenario));
+            gerenciador.adicionarMaquina(new MaquinaInspecao(cenario));
 
-        GerenciadorProducao gerenciador = new GerenciadorProducao(borracha, budgetInicial, esteira1, esteira2, esteira3);
+            // ========================================
+            // MENU
+            // ========================================
+            new MenuFabrica(gerenciador, entrada, estrategias).executar();
 
-        // ========================================
-        // MÁQUINAS
-        // ========================================
-
-        Maquina moldadora = new MaquinaMoldagem();
-        Maquina embaladora = new MaquinaEmbalagem();
-        Maquina inspecao = new MaquinaInspecao();
-
-        gerenciador.adicionarMaquina(moldadora);
-        gerenciador.adicionarMaquina(embaladora);
-        gerenciador.adicionarMaquina(inspecao);
-
-        // ========================================
-        // MENU
-        // ========================================
-
-        int opcao = -1;
-
-        while (opcao != 0) {
-
-            System.out.println("\n========================================");
-            System.out.println("              MENU INICIAL");
-            System.out.println("========================================" );
-            System.out.println("\nATUALIZAR DEMANDAS");
-            System.out.println("1 - Atualizar demanda de Pato Pequeno");
-            System.out.println("2 - Atualizar demanda de Pato Médio");
-            System.out.println("3 - Atualizar demanda de Pato Grande");
-            System.out.println("\nFABRICAR");
-            System.out.println("4 - Fabricar Pato Pequeno");
-            System.out.println("5 - Fabricar Pato Médio");
-            System.out.println("6 - Fabricar Pato Grande");
-            System.out.println("\nCONSULTAR");
-            System.out.println("7 - Ver armazém");
-            System.out.println("8 - Ver estoque de matéria-prima");
-            System.out.println("9 - Ver budget");
-            System.out.println("\nCOMPRAR MATÉRIA-PRIMA");
-            System.out.println("10 - Comprar borracha");
-            System.out.println("\n0 - Sair");
-            System.out.print("\nEscolha: ");
-
-
-            // ====================================
-            // VALIDAÇÃO DA OPÇÃO
-            // ====================================
-
-            while (!scanner.hasNextInt()) {
-                System.out.println("[ERRO] Digite apenas números.");
-                scanner.next();
-                System.out.print("Escolha: ");
-            }
-            opcao = scanner.nextInt();
-
-
-            // ====================================
-            // ATUALIZAR DEMANDA -
-            // ====================================
-
-            if (opcao == 1) {
-                int quantidade = lerQuantidade(scanner, "Pato Pequeno");
-                gerenciador.atualizarDemanda("Pato Pequeno", quantidade);
-            } 
-
-            else if (opcao == 2) {
-                int quantidade = lerQuantidade(scanner, "Pato Médio");
-                gerenciador.atualizarDemanda("Pato Médio",quantidade);
-            } 
-            else if (opcao == 3) {
-                int quantidade = lerQuantidade(scanner,"Pato Grande");
-                gerenciador.atualizarDemanda("Pato Grande",quantidade);
-            }
-
-
-            // ====================================
-            // FABRICAR PATOS
-            // ====================================
-
-            else if (opcao == 4) {
-                gerenciador.fabricarDemanda("Pato Pequeno");
-            } 
-
-            else if (opcao == 5) {
-                gerenciador.fabricarDemanda("Pato Médio");
-            } 
-            
-            else if (opcao == 6) {
-                gerenciador.fabricarDemanda("Pato Grande");
-            }
-
-
-            // ====================================
-            // ARMAZÉM
-            // ====================================
-
-            else if (opcao == 7) {
-                gerenciador.exibirArmazem();
-            }
-
-
-            // ====================================
-            // ESTOQUE
-            // ====================================
-            
-            else if (opcao == 8) {
-                gerenciador.exibirEstoqueMateriaPrima();
-            }
-
-
-            // ====================================
-            // BUDGET
-            // ====================================
-
-            else if (opcao == 9) {
-                gerenciador.exibirBudget();
-            }
-
-
-            // ====================================
-            // COMPRAR MATÉRIA-PRIMA
-            // ====================================
-
-            else if (opcao == 10) {
-
-                System.out.print("Informe a quantidade de borracha (kg): ");
-
-                while (!scanner.hasNextDouble()) {
-                    System.out.println("[ERRO] Digite apenas números.");
-                    scanner.next();
-                    System.out.print("Informe a quantidade de borracha (kg): ");
-                }
-
-                double quantidade = scanner.nextDouble();
-                gerenciador.comprarMateriaPrima(quantidade);
-             }
-
-            // ====================================
-            // SAIR
-            // ====================================
-
-            else if (opcao == 0) {
-                System.out.println("\nEncerrando a fábrica...");
-                System.out.println("Até a próxima!");
-            }
-
-            // ====================================
-            // OPÇÃO INVÁLIDA
-            // ====================================
-
-            else {
-                System.out.println("[ERRO] Opção inválida.");
-            }
+        } catch (NoSuchElementException e) {
+            System.out.println("\nEntrada encerrada. Fábrica desligada. Até a próxima!");
         }
-
-        scanner.close();
     }
 
-    // ============================================
-    // LÊ QUANTIDADE DE PRODUTOS
-    // ============================================
+    private static void imprimirBoasVindas() {
+        System.out.println();
+        System.out.println(Estilo.ciano(Estilo.linhaDupla()));
+        System.out.println(Estilo.ciano(Estilo.centralizar("FÁBRICA DE PATINHOS")));
+        System.out.println(Estilo.ciano(Estilo.linhaDupla()));
+        System.out.println("\nBem-vindo à fábrica de patinhos de borracha!");
+        System.out.println("Aqui produzimos patinhos pequenos, médios e grandes.");
+        System.out.println("\nDesenvolvido por:");
+        System.out.println("Isadora Kluge Dorigan e Guilherme Forte Silva");
+    }
 
-    private static int lerQuantidade(Scanner scanner,String nomeProduto) {
-        System.out.print("Informe a quantidade de " + nomeProduto + " desejada: ");
+    // Semente opcional: permite repetir exatamente a mesma simulação (bom para comparar cenários)
+    private static void configurarSemente(EntradaConsole entrada) {
+        System.out.println();
+        Long semente = entrada.lerLongOpcional("Semente da simulação (número, ou Enter para sorteio livre): ");
 
-        while (!scanner.hasNextInt()) {
-            System.out.println("[ERRO] Digite apenas números inteiros.");
-            scanner.next();
-            System.out.print("Informe a quantidade de " + nomeProduto + " desejada: ");
+        if (semente != null) {
+            Sorteio.definirSemente(semente);
+            System.out.println("[OK] Simulação reproduzível com a semente " + semente + ".");
+        }
+    }
+
+    private static Cenario escolherCenario(EntradaConsole entrada) {
+        Cenario[] cenarios = Cenario.values();
+
+        System.out.println();
+        Estilo.secao("ESCOLHA O CENÁRIO");
+
+        for (int i = 0; i < cenarios.length; i++) {
+            Cenario cenario = cenarios[i];
+            System.out.println((i + 1) + " - " + cenario.getNome() + ": " + cenario.getDescricao());
+            System.out.println("    Budget inicial: R$ " + String.format("%.2f", cenario.getOrcamentoInicial())
+                    + " | Borracha inicial: " + cenario.getEstoqueInicialBorracha() + " kg");
         }
 
-        int quantidade = scanner.nextInt();
+        int escolha = entrada.lerInteiro("ESCOLHA: ", 1, cenarios.length);
+        Cenario escolhido = cenarios[escolha - 1];
 
-        while (quantidade < 0) {
-            System.out.println("[ERRO] A quantidade não pode ser negativa.");
-            System.out.print("Informe novamente: ");
-
-            while (!scanner.hasNextInt()) {
-                System.out.println("[ERRO] Digite apenas números inteiros.");
-                scanner.next();
-            }
-
-            quantidade = scanner.nextInt();
-        }
-
-        return quantidade;
+        System.out.println("[OK] Cenário " + escolhido.getNome() + " ativado.");
+        return escolhido;
     }
 }

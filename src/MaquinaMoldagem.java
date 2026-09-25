@@ -1,41 +1,34 @@
 public class MaquinaMoldagem extends Maquina {
 
-    private static final double chanceAumentarFalha = 0.1;
+    // Chance da moldagem aumentar o risco de falha do produto, e quanto aumenta
+    private static final double CHANCE_AUMENTAR_RISCO = 0.10;
+    private static final double AUMENTO_RISCO = 0.10;
 
-    public MaquinaMoldagem() {
+    public MaquinaMoldagem(Cenario cenario) {
         super("Moldadora de Patinhos",
-            50,
-            0,
-            15
-        );
+                50,
+                0.04,
+                15,
+                cenario);
     }
 
     @Override
-    public Produto processar(Produto produto) {
-        // Se maquina não estiver ligada, para a produção
-        if(!estaLigada()){
-            System.out.println("[ERRO] A moldadora está desligada.");
-            return null;
-        }
-        // Se o produto for nulo, para a produção
-        if(produto == null) {
-            System.out.println("[ERRO] Produto não existe.");
-            return null;
-        }
-        
+    protected Produto executarProcessamento(Produto produto) {
         System.out.println("[OK] Moldando " + produto.getNome() + "...");
 
         produto.processar();
 
-        // A moldadora não falha diretamente, ela pode aumentar a chance de falha do produto.
-        if (Math.random() < chanceAumentarFalha) {
-            produto.aumentarProbabilidadeFalha(0.10);
-            System.out.println("[AVISO] A moldagem aumentou a probabilidade de falha.");
-        }
+        possivelmenteAumentarRisco(produto, CHANCE_AUMENTAR_RISCO, AUMENTO_RISCO,
+                "A moldagem aumentou a probabilidade de falha.");
 
         produto.processado();
 
         return produto;
+    }
+
+    @Override
+    protected String getMensagemFalha() {
+        return "Quá! O molde entupiu de borracha e o patinho se perdeu!";
     }
 
     @Override

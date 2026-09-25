@@ -37,6 +37,9 @@ public class EstacaoInspecao {
             return;
         }
 
+        produto.inspecionando();
+        produto.inspecionado();  // atualiza o status do produto para INSPECIONADO
+
         System.out.println("[OK] " + produto.getNome() + " aprovado na inspeção!");
         produtosInspecionados++;
     }
