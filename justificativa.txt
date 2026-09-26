@@ -33,3 +33,10 @@ Nesta etapa da atividade demos um foco maior em organizar e facilitar a montagem
 separadas para funcões específicas, como a moldagem e a embalagem, além disso separamos os produtos em 3 tamanhos diferentes
 (Grande, médio e pequeno) para dar um maior leque de opções para os clientes, também foi criada uma classe (GerenciadorProdução)
 para gerenciar e coordenar todo o processo produtivo, controlando, demandas, máquinas, esteiras e etc. 
+
+Na Tarefa 3, aprimoramos a arquitetura da nossa fábrica de patinhos aplicando novos padrões e conceitos:   
+Padrão Strategy: Criamos regras dinâmicas (EstrategiaFilaIndiana, EstrategiaNinhadaCheia, EstrategiaProdução, EstrategiaRevoadaGigante) para escolher qual pedido de patos fabricar primeiro.   
+Enums: Usamos Status (Demanda, Maquina, Produto) para um controle seguro e tipado do andamento dos pedidos.   
+Interface Auditavel: Adicionada para gerar diagnósticos de qualidade dos patos e verificar a necessidade de manutenção das máquinas. 
+Simulação e Cenários: Implementamos o desgaste progressivo das máquinas a cada lote e criamos cenários de operação (Ideal vs. Apocalíptico) que afetam orçamento e falhas.   
+Armazém e Menus: Reorganizamos o sistema com submenus e adicionamos a visualização detalhada do estoque de patos finalizados.
