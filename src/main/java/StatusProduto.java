@@ -1,7 +1,5 @@
 /**
  * Estados possíveis de um patinho ao longo da linha de produção.
- * 
- * StatusProduto
  */
 public enum StatusProduto {
 

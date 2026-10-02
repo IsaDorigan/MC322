@@ -4,8 +4,6 @@ import java.util.Random;
  * Fonte de números aleatórios da fábrica.
  * Com uma semente definida, as simulações ficam reproduzíveis
  * (útil para comparar os cenários Ideal e Apocalíptico).
- * 
- * Sorteio
  */
 public final class Sorteio {
 

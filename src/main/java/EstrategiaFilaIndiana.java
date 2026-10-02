@@ -3,8 +3,6 @@ import java.util.List;
 /**
  * Fila Indiana (ordem de chegada): os patinhos andam em fila, então
  * a primeira demanda cadastrada que ainda está PENDENTE sai na frente (FIFO).
- * 
- * EstrategiaFilaIndiana
  */
 public class EstrategiaFilaIndiana implements EstrategiaProducao {
 

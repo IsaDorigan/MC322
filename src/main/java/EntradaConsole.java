@@ -3,8 +3,6 @@ import java.util.Scanner;
 /**
  * Leitura validada do teclado. Lê sempre linhas inteiras, o que evita 
  * os problemas clássicos de misturar leituras numéricas e de texto
- * 
- * EntradaConsole
  */
 public class EntradaConsole {
 

@@ -1,8 +1,6 @@
 /**
  * Representa a máquina de inspeção responsável por avaliar a qualidade e aprovar 
  * ou rejeitar os produtos na linha
- * 
- * MaquinaInspecao
  */
 public class MaquinaInspecao extends Maquina {
 

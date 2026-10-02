@@ -1,7 +1,5 @@
 /**
  * Representa o modelo de pato de tamanho pequeno na produção
- * 
- * PatoMedio
  */
 public class PatoPequeno extends Produto {
 

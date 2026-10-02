@@ -1,7 +1,5 @@
 /**
  * Estados possíveis de uma máquina da linha de produção.
- * 
- * StatusMaquina
  */
 public enum StatusMaquina {
 

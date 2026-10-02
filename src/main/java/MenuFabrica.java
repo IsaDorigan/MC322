@@ -3,8 +3,6 @@ import java.util.List;
 /**
  * Menu de console da fábrica (menu principal + submenus).
  * Só conhece a interface EstrategiaProducao: as estratégias concretas chegam prontas do Main.
- * 
- * MenuFabrica
  */
 public class MenuFabrica {
 

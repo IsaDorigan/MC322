@@ -1,8 +1,6 @@
 /**
  * Estados possíveis de uma demanda de patinhos.
  * Usar um enum evita erros de digitação e comparações com String.
- * 
- * StatusDemanda
  */
 public enum StatusDemanda {
 

@@ -2,8 +2,6 @@
  * Utilitário visual do console: separadores, títulos e cores ANSI.
  * As cores só são usadas se o terminal provavelmente suporta (variável TERM ou WT_SESSION)
  * e podem ser desligadas definindo a variável de ambiente NO_COLOR.
- * 
- * Estilo
  */
 public final class Estilo {
 

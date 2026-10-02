@@ -4,8 +4,6 @@ import java.util.List;
  * Padrão Strategy: cada implementação é um algoritmo diferente para
  * escolher qual demanda a fábrica deve produzir a seguir.
  * As estratégias são "puras": apenas decidem, nunca alteram orçamento ou estoque.
- * 
- * EstrategiaProducao
  */
 public interface EstrategiaProducao {
 

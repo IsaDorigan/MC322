@@ -1,7 +1,6 @@
 /**
  * Representa uma esteira de transporte da fábrica, responsável por movimentar
  * produtos e matérias-primas entre as estações e máquinas
- * Esteira
  */
 public class Esteira {
 

@@ -1,7 +1,5 @@
 /**
  * Representa a máquina responsável por moldar a borracha e fazer virar patinhos
- * 
- * MaquinaMoldagem
  */
 public class MaquinaMoldagem extends Maquina {
 

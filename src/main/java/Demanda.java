@@ -2,8 +2,6 @@
  * Pedido de patinhos de um tipo. O estado é controlado pelo enum StatusDemanda
  * e as transições são validadas para manter a consistência
  * (ex.: não é possível concluir uma demanda CANCELADA).
- *  
- * Demanda
  */
 public class Demanda {
 

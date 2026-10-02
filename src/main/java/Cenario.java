@@ -1,8 +1,6 @@
 /**
  * Cenários de operação da fábrica. Cada cenário guarda os parâmetros
  * de orçamento, estoque inicial, confiabilidade e desgaste.
- * 
- * Cenario
  */
 public enum Cenario {
 

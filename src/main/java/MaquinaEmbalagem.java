@@ -1,7 +1,5 @@
 /**
  * Representa a máquina responsável por embalar os produtos na linha de produção
- * 
- * MaquinaEmbalagem
  */
 public class MaquinaEmbalagem extends Maquina {
 

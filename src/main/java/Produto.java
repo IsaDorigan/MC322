@@ -3,8 +3,6 @@
  * qualidade e o risco acumulado apareçam nos relatórios de auditoria.
  * As transições de status ficam aqui (DRY); as subclasses só definem
  * os dados específicos de cada tamanho.
- * 
- * Auditavel
  */
 public abstract class Produto implements Auditavel {
 

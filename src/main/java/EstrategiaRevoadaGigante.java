@@ -3,8 +3,6 @@ import java.util.List;
 /**
  * Implementa a estratégia Revoada Gigante (maior demanda): prioriza o pedido com mais patinhos
  * a fabricar, sem se preocupar se o orçamento aguenta.
- * 
- * EstrategiaRevoadaGigante
  */
 public class EstrategiaRevoadaGigante implements EstrategiaProducao {
 

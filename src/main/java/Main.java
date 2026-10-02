@@ -9,8 +9,6 @@ import java.nio.charset.StandardCharsets;
 /**
  * Classe principal que inicializa o sistema da Fábrica de Patinhos configurando 
  * o ambiente, cenário, máquinas e menu
- * 
- * Main
  */
 public class Main {
 

@@ -3,8 +3,6 @@ import java.util.List;
 /**
  * Ninhada Cheia (máximo de produtos): entre as demandas que cabem no
  * orçamento disponível, escolhe a que entrega mais patinhos no total.
- * 
- * EstrategiaNinhadaCheia
  */
 public class EstrategiaNinhadaCheia implements EstrategiaProducao {
 

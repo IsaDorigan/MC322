@@ -9,8 +9,6 @@ import java.util.TreeMap;
 /**
  * Coordena a fábrica de patinhos. No padrão Strategy ele é o CONTEXTO: não decide sozinho
  * qual demanda produzir, delega essa escolha ao objeto EstrategiaProducao atual e só conhece a interface.
- * 
- * GerenciadorProducao
  */
 public class GerenciadorProducao {
 

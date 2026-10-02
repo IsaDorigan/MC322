@@ -1,7 +1,5 @@
 /**
  * Representa a matéria-prima utilizada na fábrica controlando seu estoque, custos e reserva mínima
- * 
- * MateriaPrima
  */
 public class MateriaPrima {
 
