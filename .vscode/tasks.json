@@ -1,0 +1,18 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Executar Projeto (Gradle)",
+            "type": "shell",
+            "command": "./gradlew run",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "focus": true,
+                "panel": "shared"
+            }
+        }
+    ]
+}
