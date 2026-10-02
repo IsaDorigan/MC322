@@ -1,0 +1,37 @@
+plugins {
+    // Adiciona suporte a projetos Java (build, javadoc)
+    id 'java'
+    // Adiciona suporte para executar (run)
+    id 'application' 
+}
+
+// Configuração para a compilação e execução a partir da main
+application {
+    // Define qual é a classe principal
+    mainClass = 'Main' 
+}
+
+// Garante a leitura da entrada do usuário
+tasks.named('run') {
+    standardInput = System.in
+
+    // jvmArgs(
+    //     '-Dfile.encoding=UTF-8',
+    //     '-Dsun.stdout.encoding=UTF-8',
+    //     '-Dsun.stderr.encoding=UTF-8',
+    //     '-Dstdout.encoding=UTF-8',
+    //     '-Dstderr.encoding=UTF-8'
+    // )
+}
+
+// // Configuração para garantir que a compilação também leia os arquivos em UTF-8
+// tasks.withType(JavaCompile) {
+//     options.encoding = 'UTF-8'
+// }
+
+// // Configuração para garantir que a geração do Javadoc não falhe por causa de acentos nos comentários
+// tasks.withType(Javadoc) {
+//     options.encoding = 'UTF-8'
+//     options.charSet = 'UTF-8'
+// }
+
