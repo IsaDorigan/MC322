@@ -1,10 +1,26 @@
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+
+// import model.Esteira;
+// import model.MateriaPrima;
+
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+
+import model.Esteira;
+import model.MateriaPrima;
+import model.enums.Cenario;
+import model.maquina.MaquinaEmbalagem;
+import model.maquina.MaquinaInspecao;
+import model.maquina.MaquinaMoldagem;
+import strategy.*;
+import util.EntradaConsole;
+import util.Estilo;
+import util.Sorteio;
+
 
 /**
  * Classe principal que inicializa o sistema da Fábrica de Patinhos configurando 

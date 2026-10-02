@@ -1,5 +1,10 @@
 import java.util.List;
 
+import model.MateriaPrima;
+import strategy.EstrategiaProducao;
+import util.EntradaConsole;
+import util.Estilo;
+
 /**
  * Menu de console da fábrica (menu principal + submenus).
  * Só conhece a interface EstrategiaProducao: as estratégias concretas chegam prontas do Main.

@@ -5,6 +5,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import model.Auditavel;
+import model.Demanda;
+import model.Esteira;
+import model.MateriaPrima;
+import model.PatoGrande;
+import model.PatoMedio;
+import model.PatoPequeno;
+import model.Produto;
+import model.enums.Cenario;
+import model.enums.StatusDemanda;
+import model.maquina.Maquina;
+import strategy.EstrategiaProducao;
+import util.Estilo;
+
 
 /**
  * Coordena a fábrica de patinhos. No padrão Strategy ele é o CONTEXTO: não decide sozinho
