@@ -1,5 +1,7 @@
 package model;
 import model.enums.StatusDemanda;
+import model.exceptions.ArgumentoIlegalException;
+import model.exceptions.StatusIlegalException;
 
 
 /**
@@ -37,18 +39,18 @@ public class Demanda {
      * Define uma nova quantidade para a demanda. Se a quantidade for maior que zero, 
      * o status passa a ser pendente. Se for zero, a demanda é automaticamente cancelada
      *
-     * @param quantidade A nova quantidade de produtos desejada
-     * @return           true se a quantidade foi atualizada, false caso seja negativa ou a demanda já esteja em produção
+     * @param quantidade                 A nova quantidade de produtos desejada
+     * @return                           true se a quantidade foi atualizada, false caso seja negativa ou a demanda já esteja em produção
+     * @throws ArgumentoIlegalException  Se a quantidade for negativa
+     * @throws StatusIlegalException     Se a demanda já estiver em produção
      */
     public boolean atualizarQuantidade(int quantidade) {
         if (quantidade < 0) {
-            System.out.println("[ERRO] A quantidade não pode ser negativa.");
-            return false;
+            throw new ArgumentoIlegalException("[ERRO] A quantidade não pode ser negativa.");
         }
 
         if (status == StatusDemanda.EM_PRODUCAO) {
-            System.out.println("[ERRO] Não é possível alterar uma demanda que está em produção.");
-            return false;
+            throw new StatusIlegalException("[ERRO] Não é possível alterar uma demanda que está em produção.");
         }
 
         this.quantidadeProdutos = quantidade;
@@ -62,11 +64,11 @@ public class Demanda {
      * Altera o estado da demanda de pendente para em produção
      *
      * @return true se a transição de estado foi bem-sucedida, false se a demanda não estava no estado correto
+     * @throws StatusIlegalException se a demanda não estava no estado correto
      */
     public boolean iniciarProducao() {
         if (status != StatusDemanda.PENDENTE) {
-            System.out.println("[ERRO] Só é possível iniciar uma demanda PENDENTE (estado atual: " + status + ").");
-            return false;
+            throw new StatusIlegalException("[ERRO] Só é possível iniciar uma demanda PENDENTE (estado atual: " + status + ").");
         }
         status = StatusDemanda.EM_PRODUCAO;
         return true;
@@ -87,15 +89,14 @@ public class Demanda {
      * demanda estiver em produção e não houver mais nenhum produto pendente.
      *
      * @return true se a demanda foi concluída com sucesso, false caso contrário.
+     * @throws StatusIlegLException caso a demanda não esteja em produção ou falte produzir unidades
      */
     public boolean concluir() {
         if (status != StatusDemanda.EM_PRODUCAO) {
-            System.out.println("[ERRO] Não é possível concluir uma demanda no estado " + status + ".");
-            return false;
+            throw new StatusIlegalException("[ERRO] Não é possível concluir uma demanda no estado " + status + ".");
         }
         if (quantidadeProdutos > 0) {
-            System.out.println("[ERRO] Ainda faltam " + quantidadeProdutos + " unidade(s) para concluir a demanda.");
-            return false;
+            throw new StatusIlegalException("[ERRO] Ainda faltam " + quantidadeProdutos + " unidade(s) para concluir a demanda.");
         }
         status = StatusDemanda.CONCLUIDA;
         return true;
@@ -106,11 +107,11 @@ public class Demanda {
      * Utilizado quando ocorre uma produção parcial e o volume restante precisa voltar à fila de espera
      *
      * @return true se a demanda retornou para a fila com sucesso, false caso não estivesse em produção
+     * @throws StatusIlegalException  caso a demanda não estivesse em produção
      */
     public boolean devolverParaFila() {
         if (status != StatusDemanda.EM_PRODUCAO) {
-            System.out.println("[ERRO] Só uma demanda EM_PRODUCAO pode voltar para a fila.");
-            return false;
+            throw new StatusIlegalException("[ERRO] Só uma demanda EM_PRODUCAO pode voltar para a fila.");
         }
         status = StatusDemanda.PENDENTE;
         return true;
@@ -120,11 +121,11 @@ public class Demanda {
      * Altera o estado da demanda para cancelada, interrompendo sua execução
      *
      * @return true se o cancelamento foi realizado, false se a demanda já estava concluída ou previamente cancelada
+     * @throws IllegalStateException se a demanda já estava concluída ou previamente cancelada
      */
     public boolean cancelar() {
         if (status == StatusDemanda.CONCLUIDA || status == StatusDemanda.CANCELADA) {
-            System.out.println("[ERRO] Não é possível cancelar uma demanda no estado " + status + ".");
-            return false;
+            throw new StatusIlegalException("[ERRO] Não é possível cancelar uma demanda no estado " + status + ".");
         }
         status = StatusDemanda.CANCELADA;
         return true;

@@ -1,4 +1,8 @@
 package model;
+
+import model.exceptions.ArgumentoIlegalException;
+import model.exceptions.RecursoInsuficienteException;
+
 /**
  * Representa a matéria-prima utilizada na fábrica controlando seu estoque, custos e reserva mínima
  */
@@ -39,21 +43,21 @@ public class MateriaPrima {
     /**
      * Reduz a quantidade demandada do estoque atual, bloqueando o consumo se ultrapassar a quantidade mínima estipulada
      *
-     * @param quantidadeDemandada A quantidade de matéria-prima que quer utilizar
-     * @return                    true se o consumo foi realizado com sucesso, false se foi bloqueado ou a quantidade for inválida
+     * @param quantidadeDemandada            A quantidade de matéria-prima que quer utilizar
+     * @throws IllegalArgumentException      Se a quantidade for menor ou igual a zero
+     * @throws RecursoInsuficienteException  Se o consumo ultrapassar a reserva mínima
+     * @return                               True se o consumo foi realizado com sucesso, false se foi bloqueado ou a quantidade for inválida
      */
     public boolean consumir(double quantidadeDemandada) {
 
         if (quantidadeDemandada <= 0) {
-            System.out.println("[ERRO] A quantidade consumida deve ser maior que 0.");
-            return false;
+            throw new ArgumentoIlegalException("[ERRO] A quantidade consumida deve ser maior que 0.");
         }
 
         if (this.quantidade - quantidadeDemandada < this.quantidadeMinima - TOLERANCIA) {
-            System.out.println("[ERRO] Consumo bloqueado: o estoque de " + this.nome
+            throw new RecursoInsuficienteException("[ERRO] Consumo bloqueado: o estoque de " + this.nome
                     + " não pode ficar abaixo da reserva mínima de " + this.quantidadeMinima + " " + this.unidade
                     + ". Estoque atual: " + this.quantidade + " " + this.unidade + ".");
-            return false;
         }
 
         this.quantidade -= quantidadeDemandada;
@@ -64,11 +68,11 @@ public class MateriaPrima {
      * Acrescenta uma nova quantidade ao estoque atual da matéria-prima
      *
      * @param quantidadeAdicionada O volume de materiais recém-adquirido para somar ao estoque
+     * @throws ArgumentoIlegalException Se a quantidade adicionada for menor ou iguala 0
      */
     public void adicionarEstoque(double quantidadeAdicionada) {
         if (quantidadeAdicionada <= 0) {
-            System.out.println("[ERRO] A quantidade adicionada deve ser maior que 0.");
-            return;
+            throw new ArgumentoIlegalException("[ERRO] A quantidade adicionada deve ser maior que 0.");
         }
 
         this.quantidade += quantidadeAdicionada;
