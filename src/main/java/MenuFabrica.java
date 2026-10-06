@@ -8,6 +8,8 @@ import util.Estilo;
 /**
  * Menu de console da fábrica (menu principal + submenus).
  * Só conhece a interface EstrategiaProducao: as estratégias concretas chegam prontas do Main.
+ * 
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public class MenuFabrica {
 

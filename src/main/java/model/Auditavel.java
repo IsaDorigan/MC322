@@ -2,6 +2,8 @@ package model;
 /**
  * Contrato para qualquer componente da fábrica que possa ser auditado
  * (máquinas, produtos, etc.), mesmo que não tenham uma classe pai em comum.
+ * 
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public interface Auditavel {
 

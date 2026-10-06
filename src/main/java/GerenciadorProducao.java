@@ -23,6 +23,8 @@ import util.Estilo;
 /**
  * Coordena a fábrica de patinhos. No padrão Strategy ele é o CONTEXTO: não decide sozinho
  * qual demanda produzir, delega essa escolha ao objeto EstrategiaProducao atual e só conhece a interface.
+ * 
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public class GerenciadorProducao {
 
@@ -594,7 +596,7 @@ public class GerenciadorProducao {
         Maquina maquina = maquinas.get(indice);
 
         if (!maquina.precisaManutencao()) {
-            System.out.println("[ERRO] " + maquina.getNome() + " ainda está em boa forma, nao precisa de reparo.");
+            System.out.println("[ERRO] " + maquina.getNome() + " ainda esta em boa forma, nao precisa de reparo.");
             return;
         }
 
@@ -771,9 +773,9 @@ public class GerenciadorProducao {
                     }
                 }
 
-                String statusRisco = (emRisco == 0) ? "Risco: OK" : "Risco: ATENÇÃO (" + emRisco + " em risco)";
+                String statusRisco = (emRisco == 0) ? "Risco: OK" : "Risco: ATENCAO (" + emRisco + " em risco)";
 
-                System.out.println("   Lote " + porLote.getKey() + " | " + produtos.size() + " unid. | Qualidade média: "
+                System.out.println("   Lote " + porLote.getKey() + " | " + produtos.size() + " unid. | Qualidade media: "
                         + String.format("%.0f%%", 100 * somaQualidade / produtos.size())
                         + " | Risco medio: " + String.format("%.0f%%", 100 * somaRisco / produtos.size())
                         + " | " + statusRisco);

@@ -2,6 +2,8 @@ package model;
 /**
  * Representa uma esteira de transporte da fábrica, responsável por movimentar
  * produtos e matérias-primas entre as estações e máquinas
+ * 
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public class Esteira {
 

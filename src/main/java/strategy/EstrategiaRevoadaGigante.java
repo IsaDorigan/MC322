@@ -6,6 +6,8 @@ import model.Demanda;
 /**
  * Implementa a estratégia Revoada Gigante (maior demanda): prioriza o pedido com mais patinhos
  * a fabricar, sem se preocupar se o orçamento aguenta.
+ * 
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public class EstrategiaRevoadaGigante implements EstrategiaProducao {
 

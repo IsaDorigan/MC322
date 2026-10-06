@@ -1,6 +1,7 @@
 package model;
 /**
  * Representa o modelo de pato de tamanho grande na produção
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public class PatoGrande extends Produto {
 

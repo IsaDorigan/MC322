@@ -6,6 +6,8 @@ import model.Demanda;
 /**
  * Fila Indiana (ordem de chegada): os patinhos andam em fila, então
  * a primeira demanda cadastrada que ainda está PENDENTE sai na frente (FIFO).
+ * 
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public class EstrategiaFilaIndiana implements EstrategiaProducao {
 

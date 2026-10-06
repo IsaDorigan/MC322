@@ -2,6 +2,8 @@ package model.enums;
 /**
  * Cenários de operação da fábrica. Cada cenário guarda os parâmetros
  * de orçamento, estoque inicial, confiabilidade e desgaste.
+ * 
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public enum Cenario {
 
@@ -10,7 +12,7 @@ public enum Cenario {
           "Lagoa tranquila: orçamento farto, maquinas confiaveis e pouco desgaste.",
           10000.0, 200.0, 0.5, 0.5, 0.5, 0.00),
 
-    APOCALIPTICO("Apocalíptico",
+    APOCALIPTICO("Apocaliptico",
           "Tempestade sobre a lagoa: orçamento no limite, muita falha e desgaste acelerado.",
           600.0, 40.0, 2.5, 2.0, 2.5, 0.10);
 

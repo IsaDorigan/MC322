@@ -6,6 +6,8 @@ import model.enums.StatusProduto;
  * qualidade e o risco acumulado apareçam nos relatórios de auditoria.
  * As transições de status ficam aqui (DRY); as subclasses só definem
  * os dados específicos de cada tamanho.
+ * 
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public abstract class Produto implements Auditavel {
 

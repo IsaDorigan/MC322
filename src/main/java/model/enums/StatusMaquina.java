@@ -1,6 +1,8 @@
 package model.enums;
 /**
  * Estados possíveis de uma máquina da linha de produção.
+ * 
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public enum StatusMaquina {
 

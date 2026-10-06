@@ -6,6 +6,8 @@ import model.Demanda;
 /**
  * Ninhada Cheia (máximo de produtos): entre as demandas que cabem no
  * orçamento disponível, escolhe a que entrega mais patinhos no total.
+ * 
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public class EstrategiaNinhadaCheia implements EstrategiaProducao {
 

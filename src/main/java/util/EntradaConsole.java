@@ -4,6 +4,8 @@ import java.util.Scanner;
 /**
  * Leitura validada do teclado. Lê sempre linhas inteiras, o que evita 
  * os problemas clássicos de misturar leituras numéricas e de texto
+ * 
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public class EntradaConsole {
 
@@ -47,9 +49,9 @@ public class EntradaConsole {
                 if (valor >= min && valor <= max) {
                     return valor;
                 }
-                System.out.println("[ERRO] Digite um número entre " + min + " e " + max + ".");
+                System.out.println("[ERRO] Digite um numero entre " + min + " e " + max + ".");
             } catch (NumberFormatException e) {
-                System.out.println("[ERRO] Digite apenas números inteiros.");
+                System.out.println("[ERRO] Digite apenas numeros inteiros.");
             }
         }
     }
@@ -69,9 +71,9 @@ public class EntradaConsole {
                 if (valor >= 0 && !Double.isNaN(valor) && !Double.isInfinite(valor)) {
                     return valor;
                 }
-                System.out.println("[ERRO] O valor não pode ser negativo.");
+                System.out.println("[ERRO] O valor nao pode ser negativo.");
             } catch (NumberFormatException e) {
-                System.out.println("[ERRO] Digite apenas números.");
+                System.out.println("[ERRO] Digite apenas numeros.");
             }
         }
     }
@@ -93,7 +95,7 @@ public class EntradaConsole {
             try {
                 return Long.parseLong(texto);
             } catch (NumberFormatException e) {
-                System.out.println("[ERRO] Digite apenas números inteiros (ou Enter para sorteio livre).");
+                System.out.println("[ERRO] Digite apenas numeros inteiros (ou Enter para sorteio livre).");
             }
         }
     }

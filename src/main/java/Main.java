@@ -2,9 +2,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-// import model.Esteira;
-// import model.MateriaPrima;
-
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -25,6 +22,8 @@ import util.Sorteio;
 /**
  * Classe principal que inicializa o sistema da Fábrica de Patinhos configurando 
  * o ambiente, cenário, máquinas e menu
+ * 
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public class Main {
 

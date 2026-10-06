@@ -2,6 +2,8 @@ package model.enums;
 /**
  * Estados possíveis de uma demanda de patinhos.
  * Usar um enum evita erros de digitação e comparações com String.
+ * 
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public enum StatusDemanda {
 

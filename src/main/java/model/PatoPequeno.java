@@ -1,6 +1,8 @@
 package model;
 /**
  * Representa o modelo de pato de tamanho pequeno na produção
+ * 
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public class PatoPequeno extends Produto {
 

@@ -8,6 +8,8 @@ import model.enums.StatusDemanda;
  * Padrão Strategy: cada implementação é um algoritmo diferente para
  * escolher qual demanda a fábrica deve produzir a seguir.
  * As estratégias são "puras": apenas decidem, nunca alteram orçamento ou estoque.
+ * 
+ * @author Isadora KLuge Dorigan e Guilherme Forte Silva
  */
 public interface EstrategiaProducao {
 
