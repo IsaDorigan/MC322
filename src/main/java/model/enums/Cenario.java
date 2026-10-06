@@ -9,11 +9,11 @@ public enum Cenario {
 
     //  nome     descrição    orçamento  estoque  falhaMaq falhaProd desgaste riscoInicial
     IDEAL("Ideal",
-          "Lagoa tranquila: orçamento farto, maquinas confiaveis e pouco desgaste.",
+          "Lagoa tranquila: orcamento farto, maquinas confiaveis e pouco desgaste.",
           10000.0, 200.0, 0.5, 0.5, 0.5, 0.00),
 
     APOCALIPTICO("Apocaliptico",
-          "Tempestade sobre a lagoa: orçamento no limite, muita falha e desgaste acelerado.",
+          "Tempestade sobre a lagoa: orcamento no limite, muita falha e desgaste acelerado.",
           600.0, 40.0, 2.5, 2.0, 2.5, 0.10);
 
     private final String nome;

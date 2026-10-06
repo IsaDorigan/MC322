@@ -91,7 +91,7 @@ public class Esteira {
         }
 
         if (item == null) {
-            System.out.println("[ERRO] Não ha nenhum item na esteira.");
+            System.out.println("[ERRO] Nao ha nenhum item na esteira.");
             return null;
         }
 
