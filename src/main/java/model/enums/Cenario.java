@@ -7,7 +7,7 @@ public enum Cenario {
 
     //  nome     descrição    orçamento  estoque  falhaMaq falhaProd desgaste riscoInicial
     IDEAL("Ideal",
-          "Lagoa tranquila: orçamento farto, máquinas confiáveis e pouco desgaste.",
+          "Lagoa tranquila: orçamento farto, maquinas confiaveis e pouco desgaste.",
           10000.0, 200.0, 0.5, 0.5, 0.5, 0.00),
 
     APOCALIPTICO("Apocalíptico",

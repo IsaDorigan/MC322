@@ -11,7 +11,7 @@ import util.Estilo;
  */
 public class MenuFabrica {
 
-    private static final String[] PRODUTOS = {"Pato Pequeno", "Pato Médio", "Pato Grande"};
+    private static final String[] PRODUTOS = {"Pato Pequeno", "Pato Medio", "Pato Grande"};
     private static final int QUANTIDADE_MAXIMA = 1_000_000;
 
     private final GerenciadorProducao gerenciador;
@@ -46,11 +46,11 @@ public class MenuFabrica {
 
             Estilo.secao("MENU PRINCIPAL");
             imprimirOpcao(1, "Demandas", "(atualizar e listar pedidos)");
-            imprimirOpcao(2, "Fabricação", "(pela estratégia ou por tipo)");
-            imprimirOpcao(3, "Consultar", "(armazém, estoque e budget)");
-            imprimirOpcao(4, "Comprar matéria-prima", "(reabastecer borracha)");
-            imprimirOpcao(5, "Gerenciar estratégia", "(trocar a ordem de produção)");
-            imprimirOpcao(6, "Auditoria", "(relatórios e reparo de máquinas)");
+            imprimirOpcao(2, "Fabricacao", "(pela estrategia ou por tipo)");
+            imprimirOpcao(3, "Consultar", "(armazem, estoque e budget)");
+            imprimirOpcao(4, "Comprar materia-prima", "(reabastecer borracha)");
+            imprimirOpcao(5, "Gerenciar estrategia", "(trocar a ordem de producao)");
+            imprimirOpcao(6, "Auditoria", "(relatorios e reparo de maquinas)");
             imprimirOpcao(0, "Sair");
 
             opcao = entrada.lerInteiro("ESCOLHA: ", 0, 6);
@@ -79,8 +79,8 @@ public class MenuFabrica {
             }
         } while (opcao != 0);
 
-        System.out.println("\nEncerrando a fábrica...");
-        System.out.println("Até a próxima, e que a lagoa esteja sempre tranquila!");
+        System.out.println("\nEncerrando a fabrica...");
+        System.out.println("Ate a proxima, e que a lagoa esteja sempre tranquila!");
     }
 
     
@@ -90,9 +90,9 @@ public class MenuFabrica {
     private void imprimirCabecalho() {
         System.out.println();
         System.out.println(Estilo.ciano(Estilo.linhaDupla()));
-        System.out.println(Estilo.ciano(Estilo.caixa("[FÁBRICA DE PATINHOS DE BORRACHA]")));
-        System.out.println(Estilo.ciano(Estilo.caixa("ESTRATÉGIA ATUAL: [" + gerenciador.getEstrategiaAtual().getNomeEstrategia() + "]")));
-        System.out.println(Estilo.ciano(Estilo.caixa("CENÁRIO ATIVO: [" + gerenciador.getCenario().getNome() + "]")));
+        System.out.println(Estilo.ciano(Estilo.caixa("[FABRICA DE PATINHOS DE BORRACHA]")));
+        System.out.println(Estilo.ciano(Estilo.caixa("ESTRATEGIA ATUAL: [" + gerenciador.getEstrategiaAtual().getNomeEstrategia() + "]")));
+        System.out.println(Estilo.ciano(Estilo.caixa("CENARIO ATIVO: [" + gerenciador.getCenario().getNome() + "]")));
         System.out.println(Estilo.ciano(Estilo.caixa("BUDGET ATUAL: R$ " + String.format("%.2f", gerenciador.getBudget()))));
         System.out.println(Estilo.ciano(Estilo.linhaDupla()));
     }
@@ -136,7 +136,7 @@ public class MenuFabrica {
                 imprimirOpcao(i + 1, "Atualizar demanda de " + PRODUTOS[i]);
             }
             int opcaoListar = PRODUTOS.length + 1;
-            imprimirOpcao(opcaoListar, "Listar demandas (status e próxima da fila)");
+            imprimirOpcao(opcaoListar, "Listar demandas (status e proxima da fila)");
             imprimirOpcao(0, "Voltar");
 
             opcao = entrada.lerInteiro("ESCOLHA: ", 0, opcaoListar);
@@ -164,10 +164,10 @@ public class MenuFabrica {
 
         do {
             System.out.println();
-            Estilo.secao("FABRICAÇÃO");
-            imprimirOpcao(1, "Processar próxima demanda (estratégia: " + gerenciador.getEstrategiaAtual().getNomeEstrategia() + ")");
+            Estilo.secao("FABRICACAO");
+            imprimirOpcao(1, "Processar proxima demanda (estrategia: " + gerenciador.getEstrategiaAtual().getNomeEstrategia() + ")");
             for (int i = 0; i < PRODUTOS.length; i++) {
-                imprimirOpcao(i + 2, "Fabricar item específico: " + PRODUTOS[i]);
+                imprimirOpcao(i + 2, "Fabricar item especifico: " + PRODUTOS[i]);
             }
             imprimirOpcao(0, "Voltar");
 
@@ -194,8 +194,8 @@ public class MenuFabrica {
         do {
             System.out.println();
             Estilo.secao("CONSULTAR");
-            imprimirOpcao(1, "Ver armazém (produtos acabados)");
-            imprimirOpcao(2, "Ver estoque de matéria-prima");
+            imprimirOpcao(1, "Ver armazem (produtos acabados)");
+            imprimirOpcao(2, "Ver estoque de materia-prima");
             imprimirOpcao(3, "Ver budget");
             imprimirOpcao(0, "Voltar");
 
@@ -228,7 +228,7 @@ public class MenuFabrica {
         MateriaPrima materia = gerenciador.getMateriaPrima();
 
         System.out.println();
-        Estilo.secao("COMPRAR MATÉRIA-PRIMA");
+        Estilo.secao("COMPRAR MATERIA-PRIMA");
         System.out.println(materia.getNome() + ": R$ " + String.format("%.2f", materia.getCustoPorUnidade())
                 + " por " + materia.getUnidade() + " | Estoque atual: "
                 + String.format("%.2f", materia.getQuantidade()) + " " + materia.getUnidade()
@@ -258,7 +258,7 @@ public class MenuFabrica {
 
         do {
             System.out.println();
-            Estilo.secao("GERENCIAR ESTRATÉGIA");
+            Estilo.secao("GERENCIAR ESTRATEGIA");
 
             for (int i = 0; i < estrategias.size(); i++) {
                 EstrategiaProducao estrategia = estrategias.get(i);
@@ -289,10 +289,10 @@ public class MenuFabrica {
         do {
             System.out.println();
             Estilo.secao("AUDITORIA");
-            imprimirOpcao(1, "Relatório geral");
-            imprimirOpcao(2, "Detalhar máquinas");
+            imprimirOpcao(1, "Relatorio geral");
+            imprimirOpcao(2, "Detalhar maquinas");
             imprimirOpcao(3, "Detalhar produtos");
-            imprimirOpcao(4, "Reparar máquinas");
+            imprimirOpcao(4, "Reparar maquinas");
             imprimirOpcao(0, "Voltar");
 
             opcao = entrada.lerInteiro("ESCOLHA: ", 0, 4);
@@ -323,7 +323,7 @@ public class MenuFabrica {
         Estilo.titulo("OFICINA DE REPAROS");
         gerenciador.exibirMaquinas();
 
-        int escolha = entrada.lerInteiro("Máquina a reparar (0 cancela): ", 0, gerenciador.getQuantidadeMaquinas());
+        int escolha = entrada.lerInteiro("Maquina a reparar (0 cancela): ", 0, gerenciador.getQuantidadeMaquinas());
 
         if (escolha > 0) {
             gerenciador.repararMaquina(escolha - 1);

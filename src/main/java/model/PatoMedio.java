@@ -12,7 +12,7 @@ public class PatoMedio extends Produto {
     public PatoMedio(int id) {
         super(
             id,
-            "Pato Médio",
+            "Pato Medio",
             0.45,  // kg de borracha por unidade
             0.6    // qualidade
         );
@@ -35,6 +35,6 @@ public class PatoMedio extends Produto {
      */
     @Override
     public String getTipo() {
-        return "Pato Médio";
+        return "Pato Medio";
     }
 }

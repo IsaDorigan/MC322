@@ -56,7 +56,7 @@ public class MateriaPrima {
 
         if (this.quantidade - quantidadeDemandada < this.quantidadeMinima - TOLERANCIA) {
             throw new RecursoInsuficienteException("[ERRO] Consumo bloqueado: o estoque de " + this.nome
-                    + " não pode ficar abaixo da reserva mínima de " + this.quantidadeMinima + " " + this.unidade
+                    + " nao pode ficar abaixo da reserva minima de " + this.quantidadeMinima + " " + this.unidade
                     + ". Estoque atual: " + this.quantidade + " " + this.unidade + ".");
         }
 

@@ -51,12 +51,12 @@ public class Esteira {
      */
     public boolean adicionarItem(Object item) {
         if (!emMovimento) {
-            System.out.println("[ERRO] A esteira está desligada.");
+            System.out.println("[ERRO] A esteira esta desligada.");
             return false;
         }
 
         if (this.item != null) {
-            System.out.println("[ERRO] A esteira já possui um item.");
+            System.out.println("[ERRO] A esteira ja possui um item.");
             return false;
         }
 
@@ -84,12 +84,12 @@ public class Esteira {
     public Object removerItem() {
 
         if (!emMovimento) {
-            System.out.println("[ERRO] A esteira está desligada.");
+            System.out.println("[ERRO] A esteira esta desligada.");
             return null;
         }
 
         if (item == null) {
-            System.out.println("[ERRO] Não há nenhum item na esteira.");
+            System.out.println("[ERRO] Não ha nenhum item na esteira.");
             return null;
         }
 

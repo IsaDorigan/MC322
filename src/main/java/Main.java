@@ -105,7 +105,7 @@ public class Main {
             new MenuFabrica(gerenciador, entrada, estrategias).executar();
 
         } catch (NoSuchElementException e) {
-            System.out.println("\nEntrada encerrada. Fábrica desligada. Até a próxima!");
+            System.out.println("\nEntrada encerrada. Fabrica desligada. Ate a proxima!");
         }
     }
 
@@ -115,10 +115,10 @@ public class Main {
     private static void imprimirBoasVindas() {
         System.out.println();
         System.out.println(Estilo.ciano(Estilo.linhaDupla()));
-        System.out.println(Estilo.ciano(Estilo.centralizar("FÁBRICA DE PATINHOS")));
+        System.out.println(Estilo.ciano(Estilo.centralizar("FABRICA DE PATINHOS")));
         System.out.println(Estilo.ciano(Estilo.linhaDupla()));
-        System.out.println("\nBem-vindo à fábrica de patinhos de borracha!");
-        System.out.println("Aqui produzimos patinhos pequenos, médios e grandes.");
+        System.out.println("\nBem-vindo a fabrica de patinhos de borracha!");
+        System.out.println("Aqui produzimos patinhos pequenos, medios e grandes.");
         System.out.println("\nDesenvolvido por:");
         System.out.println("Isadora Kluge Dorigan e Guilherme Forte Silva");
     }
@@ -130,11 +130,11 @@ public class Main {
      */
     private static void configurarSemente(EntradaConsole entrada) {
         System.out.println();
-        Long semente = entrada.lerLongOpcional("Semente da simulação (número, ou Enter para sorteio livre): ");
+        Long semente = entrada.lerLongOpcional("Semente da simulacao (numero, ou Enter para sorteio livre): ");
 
         if (semente != null) {
             Sorteio.definirSemente(semente);
-            System.out.println("[OK] Simulação reproduzível com a semente " + semente + ".");
+            System.out.println("[OK] Simulacao reproduzivel com a semente " + semente + ".");
         }
     }
 
@@ -148,7 +148,7 @@ public class Main {
         Cenario[] cenarios = Cenario.values();
 
         System.out.println();
-        Estilo.secao("ESCOLHA O CENÁRIO");
+        Estilo.secao("ESCOLHA O CENARIO");
 
         for (int i = 0; i < cenarios.length; i++) {
             Cenario cenario = cenarios[i];
@@ -160,7 +160,7 @@ public class Main {
         int escolha = entrada.lerInteiro("ESCOLHA: ", 1, cenarios.length);
         Cenario escolhido = cenarios[escolha - 1];
 
-        System.out.println("[OK] Cenário " + escolhido.getNome() + " ativado.");
+        System.out.println("[OK] Cenario " + escolhido.getNome() + " ativado.");
         return escolhido;
     }
 }

@@ -11,8 +11,8 @@ public enum StatusProduto {
     EMBALADO("Embalado"),
     INSPECIONANDO("Inspecionando"),
     INSPECIONADO("Inspecionado"),
-    REJEITADO("Rejeitado na inspeção"),
-    PERDIDO("Perdido por falha de máquina");
+    REJEITADO("Rejeitado na inspecaoo"),
+    PERDIDO("Perdido por falha de maquina");
 
     private final String descricao;
 

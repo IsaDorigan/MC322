@@ -39,6 +39,6 @@ public class EstrategiaNinhadaCheia implements EstrategiaProducao {
      */
     @Override
     public String getNomeEstrategia() {
-        return "Ninhada Cheia (Maximizar Produção)";
+        return "Ninhada Cheia (Maximizar Producao)";
     }
 }

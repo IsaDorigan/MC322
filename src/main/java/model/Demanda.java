@@ -46,11 +46,11 @@ public class Demanda {
      */
     public boolean atualizarQuantidade(int quantidade) {
         if (quantidade < 0) {
-            throw new ArgumentoIlegalException("[ERRO] A quantidade não pode ser negativa.");
+            throw new ArgumentoIlegalException("[ERRO] A quantidade nao pode ser negativa.");
         }
 
         if (status == StatusDemanda.EM_PRODUCAO) {
-            throw new StatusIlegalException("[ERRO] Não é possível alterar uma demanda que está em produção.");
+            throw new StatusIlegalException("[ERRO] Nao eh possível alterar uma demanda que esta em producao.");
         }
 
         this.quantidadeProdutos = quantidade;
@@ -68,7 +68,7 @@ public class Demanda {
      */
     public boolean iniciarProducao() {
         if (status != StatusDemanda.PENDENTE) {
-            throw new StatusIlegalException("[ERRO] Só é possível iniciar uma demanda PENDENTE (estado atual: " + status + ").");
+            throw new StatusIlegalException("[ERRO] So eh possivel iniciar uma demanda PENDENTE (estado atual: " + status + ").");
         }
         status = StatusDemanda.EM_PRODUCAO;
         return true;
@@ -93,7 +93,7 @@ public class Demanda {
      */
     public boolean concluir() {
         if (status != StatusDemanda.EM_PRODUCAO) {
-            throw new StatusIlegalException("[ERRO] Não é possível concluir uma demanda no estado " + status + ".");
+            throw new StatusIlegalException("[ERRO] Nao eh possivel concluir uma demanda no estado " + status + ".");
         }
         if (quantidadeProdutos > 0) {
             throw new StatusIlegalException("[ERRO] Ainda faltam " + quantidadeProdutos + " unidade(s) para concluir a demanda.");
@@ -111,7 +111,7 @@ public class Demanda {
      */
     public boolean devolverParaFila() {
         if (status != StatusDemanda.EM_PRODUCAO) {
-            throw new StatusIlegalException("[ERRO] Só uma demanda EM_PRODUCAO pode voltar para a fila.");
+            throw new StatusIlegalException("[ERRO] So uma demanda EM_PRODUCAO pode voltar para a fila.");
         }
         status = StatusDemanda.PENDENTE;
         return true;
@@ -125,7 +125,7 @@ public class Demanda {
      */
     public boolean cancelar() {
         if (status == StatusDemanda.CONCLUIDA || status == StatusDemanda.CANCELADA) {
-            throw new StatusIlegalException("[ERRO] Não é possível cancelar uma demanda no estado " + status + ".");
+            throw new StatusIlegalException("[ERRO] Nao eh possivel cancelar uma demanda no estado " + status + ".");
         }
         status = StatusDemanda.CANCELADA;
         return true;

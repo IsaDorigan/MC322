@@ -76,7 +76,7 @@ public abstract class Produto implements Auditavel {
      */
     public void embalando() {
         setStatus(StatusProduto.EMBALANDO);
-        System.out.println("[OK] " + nome + " está sendo embalado...");
+        System.out.println("[OK] " + nome + " esta sendo embalado...");
     }
 
     /**
@@ -92,7 +92,7 @@ public abstract class Produto implements Auditavel {
      */
     public void inspecionando() {
         setStatus(StatusProduto.INSPECIONANDO);
-        System.out.println("[OK] " + nome + " está sendo inspecionado...");
+        System.out.println("[OK] " + nome + " esta sendo inspecionado...");
     }
 
     /**
