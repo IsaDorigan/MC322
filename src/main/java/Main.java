@@ -27,7 +27,12 @@ import util.Sorteio;
  */
 public class Main {
 
-    private static final double RESERVA_MINIMA_BORRACHA = 5.0;  // kg que nunca podem ser consumidos
+    /** Cria a classe principal do sistema */
+    public Main(){}
+
+    /** Quantidade mínima de borracha, em kg, que deve permanecer no estoque. */
+    private static final double RESERVA_MINIMA_BORRACHA = 5.0; 
+    /** Preço da borracha por quilograma. */
     private static final double PRECO_BORRACHA_POR_KG = 5.0;
 
     /**

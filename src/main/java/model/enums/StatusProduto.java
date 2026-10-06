@@ -6,14 +6,23 @@ package model.enums;
  */
 public enum StatusProduto {
 
+    /** Produto aguardando inicio do processamento */
     AGUARDANDO("Aguardando"),
+    /** Produto sendo moldado */
     PROCESSANDO("Moldando"),
+    /** Produto que a moldagem foi concluída */
     PROCESSADO("Moldado"),
+    /** Produto passando pelo processo de embalagem */
     EMBALANDO("Embalando"),
+    /** Produto que terminou de ser embalado */
     EMBALADO("Embalado"),
+    /** Produto sendo inspecionado */
     INSPECIONANDO("Inspecionando"),
+    /** Produto que passou pelo processo de inspeção */
     INSPECIONADO("Inspecionado"),
+    /** Produto que não aprovado no processo de inspeção */
     REJEITADO("Rejeitado na inspecaoo"),
+    /** Produto perdido devido a falha na máquina */
     PERDIDO("Perdido por falha de maquina");
 
     private final String descricao;

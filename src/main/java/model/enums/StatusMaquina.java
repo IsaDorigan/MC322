@@ -6,8 +6,11 @@ package model.enums;
  */
 public enum StatusMaquina {
 
+    /** Indica que a máquina está desligada */
     DESLIGADA("Desligada"),
+    /** Indica que a máquina está ligada */
     LIGADA("Ligada"),
+    /** Indica que a máquina está quebrada */
     QUEBRADA("Quebrada");
 
     private final String descricao;

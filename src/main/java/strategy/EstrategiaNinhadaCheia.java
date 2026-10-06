@@ -11,6 +11,9 @@ import model.Demanda;
  */
 public class EstrategiaNinhadaCheia implements EstrategiaProducao {
 
+    /** Cria uma estratégia de produção baseada na produção de mais ninhadas*/
+    public EstrategiaNinhadaCheia(){}
+
     /**
      * Percorre a lista de demandas e seleciona aquela com a maior quantidade de produtos que cabe no orçamento atual
      *

@@ -29,7 +29,7 @@ initTheme();
 <div class="nav-menu-button"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button></div>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
-<li><a href="package-summary.html">Package</a></li>
+<li><a href="index.html">Overview</a></li>
 <li class="nav-bar-cell1-rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
 <li><a href="index-all.html">Index</a></li>
@@ -64,14 +64,14 @@ initTheme();
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#constructor-detail" tabindex="0">Constructor Details</a>
 <ol class="toc-list">
-<li><a href="#%3Cinit%3E(MateriaPrima,Cenario,Esteira,Esteira,Esteira,EstrategiaProducao)" tabindex="0">GerenciadorProducao(MateriaPrima, Cenario, Esteira, Esteira, Esteira, EstrategiaProducao)</a></li>
+<li><a href="#%3Cinit%3E(model.MateriaPrima,model.enums.Cenario,model.Esteira,model.Esteira,model.Esteira,strategy.EstrategiaProducao)" tabindex="0">GerenciadorProducao(MateriaPrima, Cenario, Esteira, Esteira, Esteira, EstrategiaProducao)</a></li>
 </ol>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#adicionarMaquina(Maquina)" tabindex="0">adicionarMaquina(Maquina)</a></li>
-<li><a href="#setEstrategia(EstrategiaProducao)" tabindex="0">setEstrategia(EstrategiaProducao)</a></li>
-<li><a href="#registrarDemanda(Demanda)" tabindex="0">registrarDemanda(Demanda)</a></li>
+<li><a href="#adicionarMaquina(model.maquina.Maquina)" tabindex="0">adicionarMaquina(Maquina)</a></li>
+<li><a href="#setEstrategia(strategy.EstrategiaProducao)" tabindex="0">setEstrategia(EstrategiaProducao)</a></li>
+<li><a href="#registrarDemanda(model.Demanda)" tabindex="0">registrarDemanda(Demanda)</a></li>
 <li><a href="#atualizarDemanda(java.lang.String,int)" tabindex="0">atualizarDemanda(String, int)</a></li>
 <li><a href="#executarProximaProducao()" tabindex="0">executarProximaProducao()</a></li>
 <li><a href="#fabricarDemanda(java.lang.String)" tabindex="0">fabricarDemanda(String)</a></li>
@@ -108,9 +108,7 @@ initTheme();
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">GerenciadorProducao</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Object.html" title="class in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Coordena a fábrica de patinhos. No padrão Strategy ele é o CONTEXTO: não decide sozinho
-qual demanda produzir, delega essa escolha ao objeto EstrategiaProducao atual e só conhece a interface.
-
-GerenciadorProducao</div>
+qual demanda produzir, delega essa escolha ao objeto EstrategiaProducao atual e só conhece a interface.</div>
 </div>
 </section>
 <section class="summary">
@@ -123,12 +121,12 @@ GerenciadorProducao</div>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(MateriaPrima,Cenario,Esteira,Esteira,Esteira,EstrategiaProducao)" class="member-name-link">GerenciadorProducao</a><wbr>(<a href="MateriaPrima.html" title="class in Unnamed Package">MateriaPrima</a>&nbsp;materiaPrima,
- <a href="Cenario.html" title="enum class in Unnamed Package">Cenario</a>&nbsp;cenario,
- <a href="Esteira.html" title="class in Unnamed Package">Esteira</a>&nbsp;esteira1,
- <a href="Esteira.html" title="class in Unnamed Package">Esteira</a>&nbsp;esteira2,
- <a href="Esteira.html" title="class in Unnamed Package">Esteira</a>&nbsp;esteira3,
- <a href="EstrategiaProducao.html" title="interface in Unnamed Package">EstrategiaProducao</a>&nbsp;estrategiaInicial)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(model.MateriaPrima,model.enums.Cenario,model.Esteira,model.Esteira,model.Esteira,strategy.EstrategiaProducao)" class="member-name-link">GerenciadorProducao</a><wbr>(<a href="model/MateriaPrima.html" title="class in model">MateriaPrima</a>&nbsp;materiaPrima,
+ <a href="model/enums/Cenario.html" title="enum class in model.enums">Cenario</a>&nbsp;cenario,
+ <a href="model/Esteira.html" title="class in model">Esteira</a>&nbsp;esteira1,
+ <a href="model/Esteira.html" title="class in model">Esteira</a>&nbsp;esteira2,
+ <a href="model/Esteira.html" title="class in model">Esteira</a>&nbsp;esteira3,
+ <a href="strategy/EstrategiaProducao.html" title="interface in strategy">EstrategiaProducao</a>&nbsp;estrategiaInicial)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Inicializa o gerenciador de produção com o cenário, insumos, esteiras e a estratégia inicial definida</div>
 </div>
@@ -147,7 +145,7 @@ GerenciadorProducao</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#adicionarMaquina(Maquina)" class="member-name-link">adicionarMaquina</a><wbr>(<a href="Maquina.html" title="class in Unnamed Package">Maquina</a>&nbsp;maquina)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#adicionarMaquina(model.maquina.Maquina)" class="member-name-link">adicionarMaquina</a><wbr>(<a href="model/maquina/Maquina.html" title="class in model.maquina">Maquina</a>&nbsp;maquina)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Adiciona uma nova máquina a linha de produção, que segue a ordem de moldagem, embalagem e inspeção</div>
 </div>
@@ -219,17 +217,17 @@ e qual será a próxima a ser fabricada</div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtém o valor atualizado do orçamento da fábrica</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Cenario.html" title="enum class in Unnamed Package">Cenario</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="model/enums/Cenario.html" title="enum class in model.enums">Cenario</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCenario()" class="member-name-link">getCenario</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtém o cenário de operação atual em que a fábrica está sendo executada</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="EstrategiaProducao.html" title="interface in Unnamed Package">EstrategiaProducao</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="strategy/EstrategiaProducao.html" title="interface in strategy">EstrategiaProducao</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getEstrategiaAtual()" class="member-name-link">getEstrategiaAtual</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtém a estratégia de seleção de demandas que está ativamente em uso</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="MateriaPrima.html" title="class in Unnamed Package">MateriaPrima</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="model/MateriaPrima.html" title="class in model">MateriaPrima</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMateriaPrima()" class="member-name-link">getMateriaPrima</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtém o objeto que gerencia o estoque e o consumo de matéria-prima da fábrica</div>
@@ -240,7 +238,7 @@ e qual será a próxima a ser fabricada</div>
 <div class="block">Obtém o número total de máquinas instaladas e configuradas na linha de produção</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registrarDemanda(Demanda)" class="member-name-link">registrarDemanda</a><wbr>(<a href="Demanda.html" title="class in Unnamed Package">Demanda</a>&nbsp;demanda)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#registrarDemanda(model.Demanda)" class="member-name-link">registrarDemanda</a><wbr>(<a href="model/Demanda.html" title="class in model">Demanda</a>&nbsp;demanda)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Registra uma nova demanda no sistema e sincroniza suas estimativas</div>
 </div>
@@ -250,7 +248,7 @@ e qual será a próxima a ser fabricada</div>
 <div class="block">Realiza o reparo de uma máquina específica pagando o custo com o orçamento disponível da fábrica</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setEstrategia(EstrategiaProducao)" class="member-name-link">setEstrategia</a><wbr>(<a href="EstrategiaProducao.html" title="interface in Unnamed Package">EstrategiaProducao</a>&nbsp;novaEstrategia)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setEstrategia(strategy.EstrategiaProducao)" class="member-name-link">setEstrategia</a><wbr>(<a href="strategy/EstrategiaProducao.html" title="interface in strategy">EstrategiaProducao</a>&nbsp;novaEstrategia)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Troca a estratégia em tempo de execução</div>
 </div>
@@ -272,15 +270,15 @@ e qual será a próxima a ser fabricada</div>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(MateriaPrima,Cenario,Esteira,Esteira,Esteira,EstrategiaProducao)">
+<section class="detail" id="&lt;init&gt;(model.MateriaPrima,model.enums.Cenario,model.Esteira,model.Esteira,model.Esteira,strategy.EstrategiaProducao)">
 <h3>GerenciadorProducao</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">GerenciadorProducao</span><wbr><span class="parameters">(<a href="MateriaPrima.html" title="class in Unnamed Package">MateriaPrima</a>&nbsp;materiaPrima,
- <a href="Cenario.html" title="enum class in Unnamed Package">Cenario</a>&nbsp;cenario,
- <a href="Esteira.html" title="class in Unnamed Package">Esteira</a>&nbsp;esteira1,
- <a href="Esteira.html" title="class in Unnamed Package">Esteira</a>&nbsp;esteira2,
- <a href="Esteira.html" title="class in Unnamed Package">Esteira</a>&nbsp;esteira3,
- <a href="EstrategiaProducao.html" title="interface in Unnamed Package">EstrategiaProducao</a>&nbsp;estrategiaInicial)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">GerenciadorProducao</span><wbr><span class="parameters">(<a href="model/MateriaPrima.html" title="class in model">MateriaPrima</a>&nbsp;materiaPrima,
+ <a href="model/enums/Cenario.html" title="enum class in model.enums">Cenario</a>&nbsp;cenario,
+ <a href="model/Esteira.html" title="class in model">Esteira</a>&nbsp;esteira1,
+ <a href="model/Esteira.html" title="class in model">Esteira</a>&nbsp;esteira2,
+ <a href="model/Esteira.html" title="class in model">Esteira</a>&nbsp;esteira3,
+ <a href="strategy/EstrategiaProducao.html" title="interface in strategy">EstrategiaProducao</a>&nbsp;estrategiaInicial)</span></div>
 <div class="block">Inicializa o gerenciador de produção com o cenário, insumos, esteiras e a estratégia inicial definida</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -303,10 +301,10 @@ e qual será a próxima a ser fabricada</div>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="adicionarMaquina(Maquina)">
+<section class="detail" id="adicionarMaquina(model.maquina.Maquina)">
 <h3>adicionarMaquina</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">adicionarMaquina</span><wbr><span class="parameters">(<a href="Maquina.html" title="class in Unnamed Package">Maquina</a>&nbsp;maquina)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">adicionarMaquina</span><wbr><span class="parameters">(<a href="model/maquina/Maquina.html" title="class in model.maquina">Maquina</a>&nbsp;maquina)</span></div>
 <div class="block">Adiciona uma nova máquina a linha de produção, que segue a ordem de moldagem, embalagem e inspeção</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -316,10 +314,10 @@ e qual será a próxima a ser fabricada</div>
 </section>
 </li>
 <li>
-<section class="detail" id="setEstrategia(EstrategiaProducao)">
+<section class="detail" id="setEstrategia(strategy.EstrategiaProducao)">
 <h3>setEstrategia</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setEstrategia</span><wbr><span class="parameters">(<a href="EstrategiaProducao.html" title="interface in Unnamed Package">EstrategiaProducao</a>&nbsp;novaEstrategia)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setEstrategia</span><wbr><span class="parameters">(<a href="strategy/EstrategiaProducao.html" title="interface in strategy">EstrategiaProducao</a>&nbsp;novaEstrategia)</span></div>
 <div class="block">Troca a estratégia em tempo de execução</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -329,10 +327,10 @@ e qual será a próxima a ser fabricada</div>
 </section>
 </li>
 <li>
-<section class="detail" id="registrarDemanda(Demanda)">
+<section class="detail" id="registrarDemanda(model.Demanda)">
 <h3>registrarDemanda</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">registrarDemanda</span><wbr><span class="parameters">(<a href="Demanda.html" title="class in Unnamed Package">Demanda</a>&nbsp;demanda)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">registrarDemanda</span><wbr><span class="parameters">(<a href="model/Demanda.html" title="class in model">Demanda</a>&nbsp;demanda)</span></div>
 <div class="block">Registra uma nova demanda no sistema e sincroniza suas estimativas</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -496,7 +494,7 @@ suas médias de qualidade e risco</div>
 <section class="detail" id="getCenario()">
 <h3>getCenario</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Cenario.html" title="enum class in Unnamed Package">Cenario</a></span>&nbsp;<span class="element-name">getCenario</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="model/enums/Cenario.html" title="enum class in model.enums">Cenario</a></span>&nbsp;<span class="element-name">getCenario</span>()</div>
 <div class="block">Obtém o cenário de operação atual em que a fábrica está sendo executada</div>
 <dl class="notes">
 <dt>Returns:</dt>
@@ -509,7 +507,7 @@ suas médias de qualidade e risco</div>
 <section class="detail" id="getEstrategiaAtual()">
 <h3>getEstrategiaAtual</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="EstrategiaProducao.html" title="interface in Unnamed Package">EstrategiaProducao</a></span>&nbsp;<span class="element-name">getEstrategiaAtual</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="strategy/EstrategiaProducao.html" title="interface in strategy">EstrategiaProducao</a></span>&nbsp;<span class="element-name">getEstrategiaAtual</span>()</div>
 <div class="block">Obtém a estratégia de seleção de demandas que está ativamente em uso</div>
 <dl class="notes">
 <dt>Returns:</dt>
@@ -535,7 +533,7 @@ suas médias de qualidade e risco</div>
 <section class="detail" id="getMateriaPrima()">
 <h3>getMateriaPrima</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="MateriaPrima.html" title="class in Unnamed Package">MateriaPrima</a></span>&nbsp;<span class="element-name">getMateriaPrima</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="model/MateriaPrima.html" title="class in model">MateriaPrima</a></span>&nbsp;<span class="element-name">getMateriaPrima</span>()</div>
 <div class="block">Obtém o objeto que gerencia o estoque e o consumo de matéria-prima da fábrica</div>
 <dl class="notes">
 <dt>Returns:</dt>

@@ -7,9 +7,13 @@ package model.enums;
  */
 public enum StatusDemanda {
 
+    /** Demanda aguardando para ser selecionada */
     PENDENTE("Pendente - aguardando na fila da lagoa"),
+    /** Demdanda que está atualmente em produção */
     EM_PRODUCAO("Em producao - patinhos no molde"),
+    /** Demanda cuja produção foi concluída */
     CONCLUIDA("Concluida - revoada entregue"),
+    /** Demanda cancelada por algum motivo (orçamento, insumos ou pedido zerado) */
     CANCELADA("Cancelada - sem orçamento, sem insumos ou pedido zerado");
 
     private final String descricao;

@@ -1,4 +1,5 @@
 package model.enums;
+
 /**
  * Cenários de operação da fábrica. Cada cenário guarda os parâmetros
  * de orçamento, estoque inicial, confiabilidade e desgaste.
@@ -7,11 +8,16 @@ package model.enums;
  */
 public enum Cenario {
 
-    //  nome     descrição    orçamento  estoque  falhaMaq falhaProd desgaste riscoInicial
+    /**
+     * Cenário com orçamento bom, máquinas confiáveis e pouco desgaste
+     */
     IDEAL("Ideal",
           "Lagoa tranquila: orcamento farto, maquinas confiaveis e pouco desgaste.",
           10000.0, 200.0, 0.5, 0.5, 0.5, 0.00),
 
+    /**
+     * Cenário com o orçamento limitado, maiores falhas e desgaste
+     */
     APOCALIPTICO("Apocaliptico",
           "Tempestade sobre a lagoa: orcamento no limite, muita falha e desgaste acelerado.",
           600.0, 40.0, 2.5, 2.0, 2.5, 0.10);

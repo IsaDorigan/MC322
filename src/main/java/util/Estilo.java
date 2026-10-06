@@ -8,6 +8,7 @@ package util;
  */
 public final class Estilo {
 
+    /** Largura padrão utilizada na formatação das mensagens do console */
     public static final int LARGURA = 62;
 
     private static final String RESET = "\u001B[0m";

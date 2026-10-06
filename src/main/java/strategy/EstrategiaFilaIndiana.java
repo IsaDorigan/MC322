@@ -11,6 +11,9 @@ import model.Demanda;
  */
 public class EstrategiaFilaIndiana implements EstrategiaProducao {
 
+    /** Cria uma estratégia de produção baseada na ordem de chegada */
+    public EstrategiaFilaIndiana() {}
+
     /**
      * Percorre a lista e seleciona a primeira demanda que atenda aos critérios de elegibilidade, seguindo a ordem de chegada
      *

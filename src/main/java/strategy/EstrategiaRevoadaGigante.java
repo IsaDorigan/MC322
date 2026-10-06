@@ -11,6 +11,9 @@ import model.Demanda;
  */
 public class EstrategiaRevoadaGigante implements EstrategiaProducao {
 
+    /** Cria uma estratégia baseada no pedido com mais patinhos, sem olhar o orçamento */
+    public EstrategiaRevoadaGigante(){}
+    
     /**
      * Percorre a lista de demandas e seleciona aquela que possui o maior volume de produtos a serem fabricados mantendo a ordem de chegada em caso de empate
      *

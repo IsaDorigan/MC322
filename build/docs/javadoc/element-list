@@ -1,1 +1,7 @@
 unnamed package
+model
+model.enums
+model.exceptions
+model.maquina
+strategy
+util

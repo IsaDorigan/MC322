@@ -91,7 +91,7 @@ public class Demanda {
      * demanda estiver em produção e não houver mais nenhum produto pendente.
      *
      * @return true se a demanda foi concluída com sucesso, false caso contrário.
-     * @throws StatusIlegLException caso a demanda não esteja em produção ou falte produzir unidades
+     * @throws StatusIlegalException caso a demanda não esteja em produção ou falte produzir unidades
      */
     public boolean concluir() {
         if (status != StatusDemanda.EM_PRODUCAO) {
