@@ -15,6 +15,12 @@ import model.PatoPequeno;
 import model.Produto;
 import model.enums.Cenario;
 import model.enums.StatusDemanda;
+import model.exceptions.ArgumentoIlegalException;
+import model.exceptions.DemandaInexistenteException;
+import model.exceptions.MaquinaIndisponivelException;
+import model.exceptions.OrcamentoInsuficienteException;
+import model.exceptions.RecursoInsuficienteException;
+import model.exceptions.StatusIlegalException;
 import model.maquina.Maquina;
 import strategy.EstrategiaProducao;
 import util.Estilo;
@@ -89,11 +95,11 @@ public class GerenciadorProducao {
      * Troca a estratégia em tempo de execução
      * 
      * @param novaEstrategia A nova estratégia de seleção de demandas a ser aplicada
+     * @throws ArgumentoIlegalException Se a estratégia informada for nula
      */
     public void setEstrategia(EstrategiaProducao novaEstrategia) {
         if (novaEstrategia == null) {
-            System.out.println("[ERRO] Estrategia invalida.");
-            return;
+            throw new ArgumentoIlegalException("Estrategia invalida: nenhuma estrategia foi informada.");
         }
         this.estrategiaAtual = novaEstrategia;
         System.out.println("[OK] Estrategia alterada para: " + novaEstrategia.getNomeEstrategia());
@@ -120,11 +126,13 @@ public class GerenciadorProducao {
      *
      * @param tipoProduto O nome do tipo de produto da demanda
      * @param quantidade  A nova quantidade desejada para a demanda
+     * @throws ArgumentoIlegalException Se o tipo de produto for inválido, se a quantidade for negativa
+     *                                  ou se for zero para uma demanda que ainda não existe
+     * @throws StatusIlegalException    Se a demanda já estiver em produção
      */
     public void atualizarDemanda(String tipoProduto, int quantidade) {
         if (criarProduto(tipoProduto, 0) == null) {
-            System.out.println("[ERRO] Tipo de produto invalido.");
-            return;
+            throw new ArgumentoIlegalException("Tipo de produto invalido: " + tipoProduto + ".");
         }
 
         Demanda existente = buscarDemanda(tipoProduto);
@@ -132,8 +140,7 @@ public class GerenciadorProducao {
         // Se a demanda ainda não existir, cria uma nova
         if (existente == null) {
             if (quantidade == 0) {
-                System.out.println("[ERRO] Quantidade zero: nenhuma demanda foi criada.");
-                return;
+                throw new ArgumentoIlegalException("Quantidade zero: nenhuma demanda foi criada para " + tipoProduto + ".");
             }
             registrarDemanda(new Demanda(tipoProduto, quantidade));
             return;
@@ -194,11 +201,16 @@ public class GerenciadorProducao {
 
     /**
      * Inicia o processo de fabricação da próxima demanda elegível selecionada automaticamente pela estratégia atual
+     *
+     * @throws StatusIlegalException          Se não houver estratégia definida
+     * @throws DemandaInexistenteException    Se a estratégia não encontrar nenhuma demanda elegível
+     * @throws MaquinaIndisponivelException   Se a linha estiver mal configurada ou houver máquina quebrada
+     * @throws RecursoInsuficienteException   Se faltar matéria-prima ou a carga exceder a capacidade da linha
+     * @throws OrcamentoInsuficienteException Se o budget não cobrir o custo da demanda escolhida
      */
     public void executarProximaProducao() {
         if (estrategiaAtual == null) {
-            System.out.println("[ERRO] Nenhuma estrategia de producao definida.");
-            return;
+            throw new StatusIlegalException("Nenhuma estrategia de producao definida.");
         }
 
         for (Demanda demanda : demandas) {
@@ -209,9 +221,8 @@ public class GerenciadorProducao {
         Demanda escolhida = estrategiaAtual.selecionarDemanda(Collections.unmodifiableList(demandas), budget);
 
         if (escolhida == null) {
-            System.out.println("[ERRO] A estrategia " + estrategiaAtual.getNomeEstrategia()
-                    + " não encontrou nenhuma demanda elegivel.");
-            return;
+            throw new DemandaInexistenteException("A estrategia " + estrategiaAtual.getNomeEstrategia()
+                    + " nao encontrou nenhuma demanda elegivel.");
         }
 
         System.out.println("[ESTRATEGIA] " + estrategiaAtual.getNomeEstrategia() + " escolheu: "
@@ -224,13 +235,18 @@ public class GerenciadorProducao {
      * Inicia manualmente a produção de uma demanda específica escolhida pelo usuário, ignorando a estratégia
      *
      * @param tipoProduto O tipo do produto da demanda que será fabricada
+     * @throws DemandaInexistenteException    Se não existir demanda para o tipo informado
+     * @throws StatusIlegalException          Se a demanda não estiver pendente
+     * @throws MaquinaIndisponivelException   Se a linha estiver mal configurada ou houver máquina quebrada
+     * @throws RecursoInsuficienteException   Se faltar matéria-prima ou a carga exceder a capacidade da linha
+     * @throws OrcamentoInsuficienteException Se o budget não cobrir o custo da demanda
      */
     public void fabricarDemanda(String tipoProduto) {
         Demanda demanda = buscarDemanda(tipoProduto);
 
         if (demanda == null) {
-            System.out.println("[ERRO] Não existe demanda para " + tipoProduto + ".");
-            return;
+            throw new DemandaInexistenteException("Nao existe demanda para " + tipoProduto
+                    + ". Crie uma no menu Demandas.");
         }
 
         produzirDemanda(demanda);
@@ -240,33 +256,35 @@ public class GerenciadorProducao {
      * Executa o fluxo completo de produção para uma demanda verificando recursos, capacidade e viabilidade financeira
      *
      * @param demanda A demanda que terá seus produtos fabricados
+     * @throws StatusIlegalException          Se a demanda não estiver pendente ou estiver vazia
+     * @throws ArgumentoIlegalException       Se o tipo de produto da demanda for inválido
+     * @throws MaquinaIndisponivelException   Se a linha estiver mal configurada ou houver máquina quebrada
+     * @throws RecursoInsuficienteException   Se faltar matéria-prima ou a carga exceder a capacidade da linha
+     * @throws OrcamentoInsuficienteException Se o budget não cobrir o custo estimado da demanda
      */
     private void produzirDemanda(Demanda demanda) {
         String tipoProduto = demanda.getTipoProduto();
 
         if (demanda.getStatus() != StatusDemanda.PENDENTE) {
-            System.out.println("[ERRO] A demanda de " + tipoProduto + " nao esta pendente: "
+            throw new StatusIlegalException("A demanda de " + tipoProduto + " nao esta pendente: "
                     + demanda.getStatus().getDescricao() + ".");
-            return;
         }
 
         int quantidade = demanda.getQuantidadeProdutos(); // Quantidade de produtos a serem fabricados
 
         if (quantidade <= 0) {
-            System.out.println("[ERRO] A demanda esta vazia.");
-            return;
+            throw new StatusIlegalException("A demanda de " + tipoProduto + " esta vazia.");
         }
 
         Produto modelo = criarProduto(tipoProduto, 0);
 
         if (modelo == null) { // Verifica se existe o produto
-            System.out.println("[ERRO] Tipo de produto invalido.");
-            return;
+            throw new ArgumentoIlegalException("Tipo de produto invalido: " + tipoProduto + ".");
         }
 
-        if (!linhaConfigurada() || !todasMaquinasOperantes()) {
-            return;
-        }
+        // Todas as validações abaixo acontecem ANTES de qualquer alteração de estado (estoque, budget, status)
+        validarLinhaConfigurada();
+        validarMaquinasOperantes();
 
         sincronizarEstimativas(demanda);
 
@@ -275,25 +293,24 @@ public class GerenciadorProducao {
 
         // Verifica se essa matéria prima está disponível (respeitando a reserva mínima)
         if (!materiaPrima.verificarDisponibilidade(materiaNecessaria)) {
-            System.out.println("[ERRO] Materia-prima insuficiente.");
-            System.out.println("Necessario: " + materiaNecessaria + " " + materiaPrima.getUnidade()
-                    + " | Disponivel para uso: " + materiaPrima.getQuantidadeDisponivel() + " " + materiaPrima.getUnidade());
-            cancelarPorFaltaDeRecursos(demanda, "insumos");
-            return;
+            String aviso = cancelarPorFaltaDeRecursos(demanda, "insumos");
+            throw new RecursoInsuficienteException("Materia-prima insuficiente para fabricar a demanda.\n"
+                    + "Necessario: " + String.format("%.2f", materiaNecessaria) + " " + materiaPrima.getUnidade()
+                    + " | Disponivel para uso: " + String.format("%.2f", materiaPrima.getQuantidadeDisponivel()) + " " + materiaPrima.getUnidade()
+                    + "\n" + aviso + "\nNenhuma materia-prima foi consumida.");
         }
 
         // Verifica capacidade das máquinas e das esteiras
-        if (!verificarCapacidadeMaquinas(materiaNecessaria) || !verificarCapacidadeEsteiras(materiaNecessaria)) {
-            return;
-        }
+        validarCapacidadeMaquinas(materiaNecessaria);
+        validarCapacidadeEsteiras(materiaNecessaria);
 
         // Viabilidade financeira
         if (!demanda.cabeNoOrcamento(budget)) {
-            System.out.println("[ERRO] Budget insuficiente.");
-            System.out.println("Custo necessário: R$ " + String.format("%.2f", demanda.calcularCustoEstimado()));
-            System.out.println("Budget disponivel: R$ " + String.format("%.2f", budget));
-            cancelarPorFaltaDeRecursos(demanda, "orçamento");
-            return;
+            String aviso = cancelarPorFaltaDeRecursos(demanda, "orçamento");
+            throw new OrcamentoInsuficienteException("Budget insuficiente para fabricar a demanda.\n"
+                    + "Custo necessario: R$ " + String.format("%.2f", demanda.calcularCustoEstimado())
+                    + " | Budget disponivel: R$ " + String.format("%.2f", budget)
+                    + "\n" + aviso + "\nNenhum recurso foi consumido.");
         }
 
         int lote = proximoLote++;
@@ -325,7 +342,11 @@ public class GerenciadorProducao {
             }
 
             // O consumo é calculado a partir da demanda unitária do produto, um patinho por vez
-            if (!materiaPrima.consumir(consumoUnitario)) {
+            try {
+                materiaPrima.consumir(consumoUnitario);
+            } catch (RecursoInsuficienteException e) {
+                // O consumo é atômico (o estoque não foi alterado): encerra o lote e preserva o que já foi produzido
+                System.out.println("[ERRO] " + e.getMessage());
                 cancelarDemanda = true;
                 motivoParada = "a borracha acabou";
                 break;
@@ -370,15 +391,16 @@ public class GerenciadorProducao {
     }
 
     /**
-     * Cancela uma demanda e emite um alerta informando qual recurso motivou a interrupção
+     * Cancela uma demanda e devolve um aviso informando qual recurso motivou o cancelamento
      *
      * @param demanda A demanda que será cancelada
      * @param recurso O nome do recurso que faltou (ex: material ou orçamento)
+     * @return        O aviso de cancelamento, para ser exibido junto com a mensagem de erro
      */
-    private void cancelarPorFaltaDeRecursos(Demanda demanda, String recurso) {
+    private String cancelarPorFaltaDeRecursos(Demanda demanda, String recurso) {
         demanda.cancelar();
-        System.out.println("[CANCELADA] Demanda de " + demanda.getTipoProduto() + " cancelada por falta de " + recurso
-                + ". Reabasteça e atualize a demanda para reabri-la.");
+        return "[CANCELADA] Demanda de " + demanda.getTipoProduto() + " cancelada por falta de " + recurso
+                + ". Reabasteça e atualize a demanda para reabri-la.";
     }
 
     /**
@@ -461,17 +483,15 @@ public class GerenciadorProducao {
     // ===========================
 
     /**
-     * Verifica se a linha de produção está montada corretamente com uma esteira correspondente para cada máquina
+     * Valida se a linha de produção está montada corretamente com uma esteira correspondente para cada máquina
      *
-     * @return true se a linha estiver bem configurada, false caso contrário
+     * @throws MaquinaIndisponivelException Se não houver máquinas ou se o número de máquinas for diferente do de esteiras
      */
-    private boolean linhaConfigurada() {
+    private void validarLinhaConfigurada() {
         if (maquinas.isEmpty() || maquinas.size() != esteiras.size()) {
-            System.out.println("[ERRO] Linha de producao mal configurada: são necessarias "
+            throw new MaquinaIndisponivelException("Linha de producao mal configurada: sao necessarias "
                     + esteiras.size() + " maquinas (uma por esteira).");
-            return false;
         }
-        return true;
     }
 
     /**
@@ -493,37 +513,53 @@ public class GerenciadorProducao {
     }
 
     /**
-     * Verifica se a quantidade demandada não ultrapassa a capacidade máxima de nenhuma máquina 
+     * Garante, antes de iniciar uma produção, que nenhuma máquina da linha esteja quebrada
      *
-     * @param quantidade A quantidade de recursos exigida pela operação
-     * @return           true se todas as máquinas suportarem a carga, false caso alguma não suporte
+     * @throws MaquinaIndisponivelException Se houver pelo menos uma máquina quebrada
      */
-    private boolean verificarCapacidadeMaquinas(double quantidade) {
+    private void validarMaquinasOperantes() {
+        List<String> quebradas = new ArrayList<>();
+
         for (Maquina maquina : maquinas) {
-            if (!maquina.verificarCapacidadeMaquina(quantidade)) {
-                System.out.println("[ERRO] A demanda ultrapassa a capacidade da " + maquina.getNome() + ".");
-                return false;
+            if (maquina.estaQuebrada()) {
+                quebradas.add(maquina.getNome());
             }
         }
 
-        return true;
+        if (!quebradas.isEmpty()) {
+            throw new MaquinaIndisponivelException(String.join(", ", quebradas)
+                    + " quebrada(s). Repare em Auditoria > Reparar maquinas antes de produzir.");
+        }
     }
 
     /**
-     * Verifica se a quantidade demandada não ultrapassa a capacidade máxima de nenhuma esteira
+     * Valida se a quantidade demandada não ultrapassa a capacidade máxima de nenhuma máquina
      *
-     * @param quantidade O peso ou volume a ser transportado
-     * @return           true se todas as esteiras suportarem a carga, false caso alguma não suporte
+     * @param quantidade A quantidade de recursos exigida pela operação
+     * @throws RecursoInsuficienteException Se alguma máquina não suportar a carga
      */
-    private boolean verificarCapacidadeEsteiras(double quantidade) {
-        for (Esteira esteira : esteiras) {
-            if (!esteira.verificarCapacidade(quantidade)) {
-                System.out.println("[ERRO] A quantidade ultrapassa a capacidade da Esteira " + esteira.getNumero() + ".");
-                return false;
+    private void validarCapacidadeMaquinas(double quantidade) {
+        for (Maquina maquina : maquinas) {
+            if (!maquina.verificarCapacidadeMaquina(quantidade)) {
+                throw new RecursoInsuficienteException("A demanda ultrapassa a capacidade da " + maquina.getNome()
+                        + ". Reduza a quantidade da demanda.");
             }
         }
+    }
 
-        return true;
+    /**
+     * Valida se a quantidade demandada não ultrapassa a capacidade máxima de nenhuma esteira
+     *
+     * @param quantidade O peso ou volume a ser transportado
+     * @throws RecursoInsuficienteException Se alguma esteira não suportar a carga
+     */
+    private void validarCapacidadeEsteiras(double quantidade) {
+        for (Esteira esteira : esteiras) {
+            if (!esteira.verificarCapacidade(quantidade)) {
+                throw new RecursoInsuficienteException("A quantidade ultrapassa a capacidade da Esteira "
+                        + esteira.getNumero() + ". Reduza a quantidade da demanda.");
+            }
+        }
     }
 
     /**
@@ -548,19 +584,21 @@ public class GerenciadorProducao {
      * Realiza a compra de mais matéria-prima caso haja orçamento, adicionando-a ao estoque
      *
      * @param quantidade A quantidade de matéria-prima a ser comprada
+     * @throws ArgumentoIlegalException       Se a quantidade for menor ou igual a zero
+     * @throws OrcamentoInsuficienteException Se o budget não cobrir o custo da compra
      */
     public void comprarMateriaPrima(double quantidade) {
         if (quantidade <= 0) {
-            System.out.println("[ERRO] Quantidade invalida.");
-            return;
+            throw new ArgumentoIlegalException("Quantidade invalida: informe um valor maior que zero.");
         }
 
         double custo = quantidade * materiaPrima.getCustoPorUnidade();
 
         if (custo > budget) {
-            System.out.println("[ERRO] Budget insuficiente para a compra.");
-            System.out.println("Custo: R$ " + String.format("%.2f", custo));
-            return;
+            throw new OrcamentoInsuficienteException("Budget insuficiente para a compra.\n"
+                    + "Custo: R$ " + String.format("%.2f", custo)
+                    + " | Budget disponivel: R$ " + String.format("%.2f", budget)
+                    + "\nNenhuma compra foi realizada.");
         }
 
         materiaPrima.adicionarEstoque(quantidade);
@@ -586,24 +624,25 @@ public class GerenciadorProducao {
      * Realiza o reparo de uma máquina específica pagando o custo com o orçamento disponível da fábrica
      *
      * @param indice O índice numérico (a partir de 0) da máquina na lista
+     * @throws ArgumentoIlegalException       Se não existir máquina no índice informado
+     * @throws StatusIlegalException          Se a máquina não precisar de reparo
+     * @throws OrcamentoInsuficienteException Se o budget não cobrir o custo do reparo
      */
     public void repararMaquina(int indice) {
         if (indice < 0 || indice >= maquinas.size()) {
-            System.out.println("[ERRO] Maquina inexistente.");
-            return;
+            throw new ArgumentoIlegalException("Maquina inexistente.");
         }
 
         Maquina maquina = maquinas.get(indice);
 
         if (!maquina.precisaManutencao()) {
-            System.out.println("[ERRO] " + maquina.getNome() + " ainda esta em boa forma, nao precisa de reparo.");
-            return;
+            throw new StatusIlegalException(maquina.getNome() + " ainda esta em boa forma, nao precisa de reparo.");
         }
 
         if (maquina.getCustoReparo() > budget) {
-            System.out.println("[ERRO] Budget insuficiente para o reparo (R$ "
-                    + String.format("%.2f", maquina.getCustoReparo()) + ").");
-            return;
+            throw new OrcamentoInsuficienteException("Budget insuficiente para o reparo.\n"
+                    + "Custo do reparo: R$ " + String.format("%.2f", maquina.getCustoReparo())
+                    + " | Budget disponivel: R$ " + String.format("%.2f", budget) + "\nNenhum reparo foi realizado.");
         }
 
         budget -= maquina.getCustoReparo();

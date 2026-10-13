@@ -5,7 +5,7 @@ package model.exceptions;
  * 
  * @author Isadora Kluge Dorigan e Guilherme Forte Silva
  */
-public class RecursoInsuficienteException extends RuntimeException {
+public class RecursoInsuficienteException extends PlantaException {
     
     /**
      * Cria uma exceção com a mensagem especificada. 

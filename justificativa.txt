@@ -40,3 +40,17 @@ Enums: Usamos Status (Demanda, Maquina, Produto) para um controle seguro e tipad
 Interface Auditavel: Adicionada para gerar diagnósticos de qualidade dos patos e verificar a necessidade de manutenção das máquinas. 
 Simulação e Cenários: Implementamos o desgaste progressivo das máquinas a cada lote e criamos cenários de operação (Ideal vs. Apocalíptico) que afetam orçamento e falhas.   
 Armazém e Menus: Reorganizamos o sistema com submenus e adicionamos a visualização detalhada do estoque de patos finalizados.
+
+Na Tarefa 4, focamos em manutenção, documentação e robustez do projeto, sem mudar as regras de negócio já existentes:
+Gradle: o projeto passou a ser construído e executado pelo Gradle (build.gradle, settings.gradle e Gradle Wrapper), com as tarefas
+./gradlew build, ./gradlew run e ./gradlew javadoc, sem depender de comandos manuais de compilação. Adicionamos README.md e .gitignore
+(as pastas build/ e .gradle/ são geradas e não ficam no repositório).
+Javadoc: todas as classes, interfaces, enums e métodos receberam documentação com @param, @return, @throws e @author, e revisamos os
+textos para que descrevam o comportamento real (por exemplo, quais exceções cada método lança).
+Exceções de domínio: criamos a PlantaException (base) e as exceções ArgumentoIlegalException, StatusIlegalException, DemandaInexistenteException,
+RecursoInsuficienteException, OrcamentoInsuficienteException e MaquinaIndisponivelException. Mantivemos poucas classes de propósito (KISS),
+cada uma representando um tipo de erro que o usuário pode corrigir de forma diferente.
+Tratamento de erros: o GerenciadorProducao lança a exceção adequada quando uma regra é violada e o MenuFabrica, que é a camada que fala com o
+usuário, captura PlantaException, mostra uma mensagem clara e volta ao menu. Todas as validações ocorrem antes de alterar estoque, budget ou
+status da demanda, então uma operação que falha não deixa a planta em estado inconsistente. Dentro do laço de produção, a falta de borracha
+passou a ser tratada com try/catch, encerrando o lote e preservando o que já foi produzido.

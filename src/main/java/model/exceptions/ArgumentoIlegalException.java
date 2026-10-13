@@ -5,7 +5,7 @@ package model.exceptions;
  * 
  * @author Isadora Kluge Dorigan e Guilherme Forte Silva
  */
-public class ArgumentoIlegalException extends RuntimeException {
+public class ArgumentoIlegalException extends PlantaException {
     
     /**
      * Cria uma exceção com a mensagem especificada. 

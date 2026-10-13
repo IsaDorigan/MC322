@@ -1,6 +1,7 @@
 import java.util.List;
 
 import model.MateriaPrima;
+import model.exceptions.PlantaException;
 import strategy.EstrategiaProducao;
 import util.EntradaConsole;
 import util.Estilo;
@@ -147,7 +148,7 @@ public class MenuFabrica {
                 String produto = PRODUTOS[opcao - 1];
                 int quantidade = entrada.lerInteiro(
                         "Informe a quantidade de " + produto + " desejada (0 cancela o pedido): ", 0, QUANTIDADE_MAXIMA);
-                gerenciador.atualizarDemanda(produto, quantidade);
+                executarComTratamento(() -> gerenciador.atualizarDemanda(produto, quantidade));
             } else if (opcao == opcaoListar) {
                 gerenciador.exibirDemandas();
             }
@@ -176,9 +177,10 @@ public class MenuFabrica {
             opcao = entrada.lerInteiro("ESCOLHA: ", 0, PRODUTOS.length + 1);
 
             if (opcao == 1) {
-                gerenciador.executarProximaProducao();
+                executarComTratamento(() -> gerenciador.executarProximaProducao());
             } else if (opcao >= 2) {
-                gerenciador.fabricarDemanda(PRODUTOS[opcao - 2]);
+                String produto = PRODUTOS[opcao - 2];
+                executarComTratamento(() -> gerenciador.fabricarDemanda(produto));
             }
         } while (opcao != 0);
     }
@@ -245,7 +247,7 @@ public class MenuFabrica {
             return;
         }
 
-        gerenciador.comprarMateriaPrima(quantidade);
+        executarComTratamento(() -> gerenciador.comprarMateriaPrima(quantidade));
     }
 
     // ============================================
@@ -272,7 +274,8 @@ public class MenuFabrica {
             opcao = entrada.lerInteiro("ESCOLHA: ", 0, estrategias.size());
 
             if (opcao >= 1) {
-                gerenciador.setEstrategia(estrategias.get(opcao - 1));
+                EstrategiaProducao escolhida = estrategias.get(opcao - 1);
+                executarComTratamento(() -> gerenciador.setEstrategia(escolhida));
                 gerenciador.exibirDemandas();  // mostra na hora o impacto na ordem de produção
             }
         } while (opcao != 0);
@@ -328,7 +331,40 @@ public class MenuFabrica {
         int escolha = entrada.lerInteiro("Maquina a reparar (0 cancela): ", 0, gerenciador.getQuantidadeMaquinas());
 
         if (escolha > 0) {
-            gerenciador.repararMaquina(escolha - 1);
+            executarComTratamento(() -> gerenciador.repararMaquina(escolha - 1));
         }
+    }
+
+    // ============================================
+    // TRATAMENTO DE ERROS
+    // ============================================
+
+    /**
+     * Executa uma operação do gerenciador. Se ela violar uma regra de negócio (PlantaException),
+     * o erro é mostrado ao usuário e o controle volta ao menu, sem encerrar o programa
+     *
+     * @param operacao A operação do gerenciador a ser executada
+     */
+    private void executarComTratamento(Runnable operacao) {
+        try {
+            operacao.run();
+        } catch (PlantaException e) {
+            exibirErro(e);
+        }
+    }
+
+    /**
+     * Exibe um erro de regra de negócio em destaque e aguarda o usuário confirmar a leitura
+     *
+     * @param erro A exceção de domínio cuja mensagem será exibida
+     */
+    private void exibirErro(PlantaException erro) {
+        System.out.println();
+        System.out.println(Estilo.vermelho(Estilo.linhaDupla()));
+        System.out.println(Estilo.vermelho("ERRO"));
+        System.out.println(Estilo.vermelho(Estilo.linhaDupla()));
+        System.out.println(erro.getMessage());
+        System.out.println();
+        entrada.lerLinha("Pressione ENTER para continuar...");
     }
 }
