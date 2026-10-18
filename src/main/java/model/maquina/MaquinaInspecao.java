@@ -20,12 +20,12 @@ public class MaquinaInspecao extends Maquina {
      */
     public MaquinaInspecao(Cenario cenario) {
         super(
-                "Máquina de Inspeção",
+                "Maquina de Inspecao",
                 50.0,
                 0.10,
                 20.0,
-                cenario
-        );
+                cenario,
+                1);
     }
 
     /**
@@ -36,7 +36,7 @@ public class MaquinaInspecao extends Maquina {
      */
     @Override
     protected Produto executarProcessamento(Produto produto) {
-        System.out.println("[OK] Iniciando inspeção...");
+        System.out.println("[OK] Iniciando inspecao...");
 
         produto.inspecionando();
 
@@ -52,13 +52,13 @@ public class MaquinaInspecao extends Maquina {
 
         if (Sorteio.ocorre(chanceRejeicao)) {
             produto.setStatus(StatusProduto.REJEITADO);
-            System.out.println("[ERRO] " + produto.getNome() + " foi rejeitado na inspeção.");
+            System.out.println("[ERRO] " + produto.getNome() + " foi rejeitado na inspecao.");
             return null;
         }
 
         produto.inspecionado();  // atualiza o status para INSPECIONADO
 
-        System.out.println("[OK] " + produto.getNome() + " aprovado na inspeção!");
+        System.out.println("[OK] " + produto.getNome() + " aprovado na inspecao!");
 
         return produto;
     }
@@ -70,7 +70,7 @@ public class MaquinaInspecao extends Maquina {
      */
     @Override
     protected String getMensagemFalha() {
-        return "[ERRO] Quá! O sensor de inspeção pifou e o patinho ficou sem laudo!";
+        return "[ERRO] Qua! O sensor de inspecao pifou e o patinho ficou sem laudo!";
     }
 
     /**
@@ -80,6 +80,6 @@ public class MaquinaInspecao extends Maquina {
      */
     @Override
     public String getTipo() {
-        return "Inspeção";
+        return "Inspecao";
     }
 }

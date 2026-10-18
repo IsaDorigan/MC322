@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import model.Auditavel;
 import model.Demanda;
 import model.Esteira;
+import model.LinhaDeProducao;
 import model.MateriaPrima;
 import model.PatoGrande;
 import model.PatoMedio;
@@ -25,7 +26,6 @@ import model.maquina.Maquina;
 import strategy.EstrategiaProducao;
 import util.Estilo;
 
-
 /**
  * Coordena a fábrica de patinhos. No padrão Strategy ele é o CONTEXTO: não decide sozinho
  * qual demanda produzir, delega essa escolha ao objeto EstrategiaProducao atual e só conhece a interface.
@@ -38,8 +38,9 @@ public class GerenciadorProducao {
     
     private ArrayList<Demanda> demandas;
     private ArrayList<Produto> produtosFabricados;
-    private ArrayList<Maquina> maquinas;
     private ArrayList<Esteira> esteiras;  // esteiras[i] leva a carga até maquinas[i]
+
+    private LinhaDeProducao linhaDeProducao;
 
     private MateriaPrima materiaPrima;
     private double budget;
@@ -61,15 +62,15 @@ public class GerenciadorProducao {
      */
     public GerenciadorProducao(MateriaPrima materiaPrima, Cenario cenario,
                                Esteira esteira1, Esteira esteira2, Esteira esteira3,
-                               EstrategiaProducao estrategiaInicial) {
+                               EstrategiaProducao estrategiaInicial, LinhaDeProducao linhaDeProducao) {
         this.materiaPrima = materiaPrima;
         this.cenario = cenario;
         this.budget = cenario.getOrcamentoInicial();
         this.estrategiaAtual = estrategiaInicial;
+        this.linhaDeProducao = linhaDeProducao;
 
         this.demandas = new ArrayList<>();
         this.produtosFabricados = new ArrayList<>();
-        this.maquinas = new ArrayList<>();
 
         this.esteiras = new ArrayList<>();
         this.esteiras.add(esteira1);
@@ -80,16 +81,6 @@ public class GerenciadorProducao {
     // ===========================
     // CONFIGURAÇÃO
     // ===========================
-
-    /**
-     * Adiciona uma nova máquina a linha de produção, que segue a ordem de moldagem, embalagem e inspeção
-     *
-     * @param maquina A maquina a ser inserida na linha de produção
-     */
-    public void adicionarMaquina(Maquina maquina) {
-        maquinas.add(maquina);
-    }
-
      
     /**
      * Troca a estratégia em tempo de execução
@@ -285,7 +276,6 @@ public class GerenciadorProducao {
         // Todas as validações abaixo acontecem ANTES de qualquer alteração de estado (estoque, budget, status)
         validarLinhaConfigurada();
         validarMaquinasOperantes();
-
         sincronizarEstimativas(demanda);
 
         // Consumo total estimado = quantidade x consumo unitário do produto cadastrado
@@ -293,11 +283,8 @@ public class GerenciadorProducao {
 
         // Verifica se essa matéria prima está disponível (respeitando a reserva mínima)
         if (!materiaPrima.verificarDisponibilidade(materiaNecessaria)) {
-            String aviso = cancelarPorFaltaDeRecursos(demanda, "insumos");
-            throw new RecursoInsuficienteException("Materia-prima insuficiente para fabricar a demanda.\n"
-                    + "Necessario: " + String.format("%.2f", materiaNecessaria) + " " + materiaPrima.getUnidade()
-                    + " | Disponivel para uso: " + String.format("%.2f", materiaPrima.getQuantidadeDisponivel()) + " " + materiaPrima.getUnidade()
-                    + "\n" + aviso + "\nNenhuma materia-prima foi consumida.");
+            cancelarPorFaltaDeRecursos(demanda, "insumos");
+            throw new RecursoInsuficienteException("Materia prima insuficiente. Nenhuma consumida.");
         }
 
         // Verifica capacidade das máquinas e das esteiras
@@ -306,11 +293,8 @@ public class GerenciadorProducao {
 
         // Viabilidade financeira
         if (!demanda.cabeNoOrcamento(budget)) {
-            String aviso = cancelarPorFaltaDeRecursos(demanda, "orçamento");
-            throw new OrcamentoInsuficienteException("Budget insuficiente para fabricar a demanda.\n"
-                    + "Custo necessario: R$ " + String.format("%.2f", demanda.calcularCustoEstimado())
-                    + " | Budget disponivel: R$ " + String.format("%.2f", budget)
-                    + "\n" + aviso + "\nNenhum recurso foi consumido.");
+            cancelarPorFaltaDeRecursos(demanda, "orcamento");
+            throw new OrcamentoInsuficienteException("Budget insuficiente.");
         }
 
         int lote = proximoLote++;
@@ -321,69 +305,71 @@ public class GerenciadorProducao {
         double custoUnitario = calcularCustoOperacaoPorUnidade();
         double consumoUnitario = modelo.getQuantidadeMateriaPrimaPorUnidade();
         double budgetInicial = budget;
-
         int fabricadosComSucesso = 0;
         boolean cancelarDemanda = false;   // parou por falta de orçamento/insumos
         String motivoParada = null;
 
+        RuntimeException falhaCriticaEquipamento = null;
+
         // Fabrica cada produto individualmente
         for (int i = 0; i < quantidade; i++) {
             System.out.println("\n--- Produto " + (i + 1) + " de " + quantidade + " ---");
+            if (!todasMaquinasOperantes()) { motivoParada = "maquina quebrou"; break; }
+            if (custoUnitario > budget) { cancelarDemanda = true; motivoParada = "orcamento acabou"; break; }
 
-            if (!todasMaquinasOperantes()) {
-                motivoParada = "uma maquina quebrou";
-                break;
-            }
-
-            if (custoUnitario > budget) {
-                cancelarDemanda = true;
-                motivoParada = "o orcamento acabou";
-                break;
-            }
-
-            // O consumo é calculado a partir da demanda unitária do produto, um patinho por vez
             try {
                 materiaPrima.consumir(consumoUnitario);
             } catch (RecursoInsuficienteException e) {
-                // O consumo é atômico (o estoque não foi alterado): encerra o lote e preserva o que já foi produzido
                 System.out.println("[ERRO] " + e.getMessage());
-                cancelarDemanda = true;
-                motivoParada = "a borracha acabou";
-                break;
+                cancelarDemanda = true; motivoParada = "borracha acabou"; break;
             }
 
             budget -= custoUnitario;
-
             Produto produto = criarProduto(tipoProduto, proximoIdProduto++);
             produto.aumentarProbabilidadeFalha(cenario.getRiscoInicialProduto());
             produto.setLote(lote);
 
-            if (processarProduto(produto)) {
-                produtosFabricados.add(produto);
-                produto.registrarFabricacao();
-                fabricadosComSucesso++;
-                System.out.println("[OK] Produto armazenado.");
+            // NOVO: O try-catch segura o erro para podermos arrumar a demanda primeiro
+            try {
+                if (processarProduto(produto)) {
+                    produtosFabricados.add(produto);
+                    produto.registrarFabricacao();
+                    fabricadosComSucesso++;
+                }
+            } catch (RuntimeException e) {
+                falhaCriticaEquipamento = e;
+                break; // Para o loop de fabricação na hora!
             }
         }
 
         // Atualiza o estado da demanda de forma consistente
         demanda.registrarProduzidos(fabricadosComSucesso);
 
-        if (cancelarDemanda) {
+        if (falhaCriticaEquipamento != null) {
+            demanda.devolverParaFila(); 
+            
+            // Em vez de dar um "throw" e chamar a tela vermelha do menu, 
+            // nós apenas imprimimos o erro e o aviso no fluxo normal do console:
+            System.out.println("[ERRO] " + falhaCriticaEquipamento.getMessage());
+            System.out.println("[AVISO] " + fabricadosComSucesso + " produto(s) fabricado(s). O restante da demanda voltou para a fila.");
+            
+        }
+
+        else if (cancelarDemanda) {
             demanda.cancelar();
             System.out.println("\n[CANCELADA] Producao interrompida: " + motivoParada + ". Sobraram "
                     + demanda.getQuantidadeProdutos() + " unidade(s) sem produzir.");
-        } else if (demanda.getQuantidadeProdutos() == 0) {
+        } 
+
+        else if (demanda.getQuantidadeProdutos() == 0) {
             demanda.concluir();
             System.out.println("\n[OK] Demanda atendida! Revoada entregue.");
-        } else {
+        } 
+        else {
             demanda.devolverParaFila();
-            String motivo = (motivoParada != null) ? " (" + motivoParada + ")" : " (patinhos perdidos na linha)";
-            System.out.println("\n[OK] " + fabricadosComSucesso + " produto(s) fabricado(s)" + motivo
-                    + ". Faltam " + demanda.getQuantidadeProdutos() + "; a demanda voltou para a fila.");
+            System.out.println("\n[AVISO] " + fabricadosComSucesso + " produto(s) fabricado(s). O restante da demanda voltou para a fila.");
         }
 
-        System.out.println("Quantidade de produtos fabricados: " + produtosFabricados.size());
         System.out.println("Materia-prima restante: " + String.format("%.2f", materiaPrima.getQuantidade())
                 + " " + materiaPrima.getUnidade());
         System.out.println("Custo desta producao: R$ " + String.format("%.2f", budgetInicial - budget));
@@ -410,6 +396,7 @@ public class GerenciadorProducao {
      * @return        true se o produto passar por toda a linha com sucesso, false caso falhe em alguma etapa
      */
     private boolean processarProduto(Produto produto) {
+        List<Maquina> maquinas = linhaDeProducao.getMaquinas();
 
         for (int i = 0; i < maquinas.size(); i++) {
             Maquina maquina = maquinas.get(i);
@@ -425,10 +412,15 @@ public class GerenciadorProducao {
 
             maquina.ligar();
             Produto resultado = maquina.processar(produto);
-            maquina.desligar();
+            
+            try {
+                resultado = maquina.processar(produto);
+            } finally {
+                maquina.desligar(); 
+            }
 
             if (resultado == null) {
-                System.out.println("[ERRO] " + produto.getNome() + " não passou da etapa de " + maquina.getTipo() + ".");
+                System.out.println("[ERRO] " + produto.getNome() + " nao passou da etapa de " + maquina.getTipo() + ".");
                 return false;
             }
         }
@@ -436,6 +428,7 @@ public class GerenciadorProducao {
         System.out.println("[OK] Produto passou por toda a linha de producao!");
         return true;
     }
+
 
     /**
      * Executa a movimentação de uma carga (produto ou matéria-prima) ligando a esteira e percorrendo o trajeto
@@ -488,7 +481,7 @@ public class GerenciadorProducao {
      * @throws MaquinaIndisponivelException Se não houver máquinas ou se o número de máquinas for diferente do de esteiras
      */
     private void validarLinhaConfigurada() {
-        if (maquinas.isEmpty() || maquinas.size() != esteiras.size()) {
+        if (linhaDeProducao.getMaquinas().isEmpty() || linhaDeProducao.getMaquinas().size() != esteiras.size()) {
             throw new MaquinaIndisponivelException("Linha de producao mal configurada: sao necessarias "
                     + esteiras.size() + " maquinas (uma por esteira).");
         }
@@ -502,7 +495,7 @@ public class GerenciadorProducao {
     private boolean todasMaquinasOperantes() {
         boolean todasOk = true;
 
-        for (Maquina maquina : maquinas) {
+        for (Maquina maquina : linhaDeProducao.getMaquinas()) {
             if (maquina.estaQuebrada()) {
                 System.out.println("[ERRO] " + maquina.getNome() + " esta quebrada. Repare em Auditoria > Reparar maquinas.");
                 todasOk = false;
@@ -520,7 +513,7 @@ public class GerenciadorProducao {
     private void validarMaquinasOperantes() {
         List<String> quebradas = new ArrayList<>();
 
-        for (Maquina maquina : maquinas) {
+        for (Maquina maquina : linhaDeProducao.getMaquinas()) {
             if (maquina.estaQuebrada()) {
                 quebradas.add(maquina.getNome());
             }
@@ -539,7 +532,7 @@ public class GerenciadorProducao {
      * @throws RecursoInsuficienteException Se alguma máquina não suportar a carga
      */
     private void validarCapacidadeMaquinas(double quantidade) {
-        for (Maquina maquina : maquinas) {
+        for (Maquina maquina : linhaDeProducao.getMaquinas()) {
             if (!maquina.verificarCapacidadeMaquina(quantidade)) {
                 throw new RecursoInsuficienteException("A demanda ultrapassa a capacidade da " + maquina.getNome()
                         + ". Reduza a quantidade da demanda.");
@@ -570,7 +563,7 @@ public class GerenciadorProducao {
     private double calcularCustoOperacaoPorUnidade() {
         double custoMaquinas = 0.0;
 
-        for (Maquina maquina : maquinas) {
+        for (Maquina maquina : linhaDeProducao.getMaquinas()) {
             custoMaquinas += maquina.getCustoOperacao();
         }
         return custoMaquinas;
@@ -613,9 +606,10 @@ public class GerenciadorProducao {
      * Exibe  uma lista numerada com o relatório de diagnóstico e o custo de reparo de cada máquina
      */
     public void exibirMaquinas() {
+        List<Maquina> maquinas = linhaDeProducao.getMaquinas();
         for (int i = 0; i < maquinas.size(); i++) {
             Maquina maquina = maquinas.get(i);
-            System.out.println((i + 1) + " - " + maquina.gerarRelatorioDiagnostico()
+            System.out.println((i + 1) + " - " + maquina.gerarRelatorioDiagnostico().split("\n")[0]
                     + " | Reparo: R$ " + String.format("%.2f", maquina.getCustoReparo()));
         }
     }
@@ -629,6 +623,7 @@ public class GerenciadorProducao {
      * @throws OrcamentoInsuficienteException Se o budget não cobrir o custo do reparo
      */
     public void repararMaquina(int indice) {
+        List<Maquina> maquinas = linhaDeProducao.getMaquinas();
         if (indice < 0 || indice >= maquinas.size()) {
             throw new ArgumentoIlegalException("Maquina inexistente.");
         }
@@ -659,10 +654,10 @@ public class GerenciadorProducao {
      * Gera e exibe um relatório contendo o status atual de todas as máquinas e dos produtos armazenados que exigem atenção
      */
     public void gerarAuditoriaGeral() {
-        Estilo.titulo("AUDITORIA GERAL DA FÁBRICA");
+        Estilo.titulo("AUDITORIA GERAL DA FABRICA");
 
-        System.out.println("\n[MAQUINAS]");
-        int maquinasEmAtencao = auditar(maquinas, false);
+        System.out.println("\n[ESTRUTURA FISICA]");
+        System.out.println(linhaDeProducao.gerarRelatorioDiagnostico());
 
         System.out.println("\n[PRODUTOS EM ESTOQUE QUE EXIGEM ATENCAO]");
         int produtosEmAtencao = auditar(produtosFabricados, true);
@@ -670,19 +665,26 @@ public class GerenciadorProducao {
             System.out.println("Nenhum produto em risco.");
         }
 
+        int maquinasEmAtencao = 0;
+        for (Maquina maquina : linhaDeProducao.getMaquinas()) {
+            if (maquina.precisaManutencao()) {
+                maquinasEmAtencao++;
+            }
+        }
+
         System.out.println("\n" + Estilo.linhaSimples());
-        System.out.println("Componentes auditados: " + (maquinas.size() + produtosFabricados.size())
-                + " (" + maquinas.size() + " maquinas, " + produtosFabricados.size() + " produtos)");
+        System.out.println("Componentes auditados: " + (linhaDeProducao.getMaquinas().size() + produtosFabricados.size())
+                + " (" + linhaDeProducao.getMaquinas().size() + " maquinas, " + produtosFabricados.size() + " produtos)");
         System.out.println("Exigem atencao: " + (maquinasEmAtencao + produtosEmAtencao));
         System.out.println("Cenario: " + cenario.getNome() + " | Budget: R$ " + String.format("%.2f", budget));
     }
 
     /**
-     * Exibe um relatório de auditoria focado  no diagnóstico de todas as máquinas
+     * Exibe um relatório de auditoria focado no diagnóstico da linha de produção e de todas as suas máquinas em cascata
      */
     public void gerarAuditoriaMaquinas() {
         Estilo.titulo("AUDITORIA DAS MAQUINAS");
-        auditar(maquinas, false);
+        System.out.println(linhaDeProducao.gerarRelatorioDiagnostico());
     }
 
     /**
@@ -871,7 +873,7 @@ public class GerenciadorProducao {
      * @return A quantidade de máquinas
      */
     public int getQuantidadeMaquinas() {
-        return maquinas.size();
+        return linhaDeProducao.getMaquinas().size();
     }
 
     /**

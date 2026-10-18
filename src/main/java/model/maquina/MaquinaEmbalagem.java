@@ -21,7 +21,8 @@ public class MaquinaEmbalagem extends Maquina {
                 50.0,
                 0.03,
                 10.0,
-                cenario);
+                cenario,
+                3);
     }
 
     /**

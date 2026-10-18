@@ -1,9 +1,17 @@
 package model.maquina;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import model.Auditavel;
 import model.Produto;
 import model.enums.Cenario;
 import model.enums.StatusMaquina;
 import model.enums.StatusProduto;
+import model.maquina.componentes.AtuadorMecanico;
+import model.maquina.componentes.Motor;
+import model.maquina.componentes.SensorTemperatura;
 import util.Sorteio;
 
 /**
@@ -38,6 +46,11 @@ public abstract class Maquina implements Auditavel {
     private int usos;
     private int falhas;
 
+    // Relações de composição
+    private final Motor motor;                            
+    private final SensorTemperatura sensor;               
+    private final List<AtuadorMecanico> atuadores;        
+
     
     /**
      * Construtor padrão da Máquina
@@ -49,7 +62,7 @@ public abstract class Maquina implements Auditavel {
      * @param cenario                O cenário atual (afeta multiplicadores de desgaste e falha)
      */
     public Maquina(String nome, double capacidadeMaxima, double probabilidadeFalhaBase,
-                   double custoOperacao, Cenario cenario) {
+                   double custoOperacao, Cenario cenario, int qtdAtuadores) {
         this.nome = nome;
         this.capacidadeMaxima = capacidadeMaxima;
         this.probabilidadeFalhaBase = probabilidadeFalhaBase * cenario.getMultiplicadorFalhaMaquina();
@@ -61,6 +74,14 @@ public abstract class Maquina implements Auditavel {
         this.limiarManutencao = LIMIAR_MANUTENCAO_PADRAO;
         this.usos = 0;
         this.falhas = 0;
+
+        // O "Todo" instancia as "Partes", amarrando os ciclos de vida.
+        this.motor = new Motor("G4-" + nome.replaceAll("\\s+", ""));
+        this.sensor = new SensorTemperatura("STX-" + nome.replaceAll("\\s+", ""));
+        this.atuadores = new ArrayList<>();
+        for (int i = 0; i < qtdAtuadores; i++) {
+            this.atuadores.add(new AtuadorMecanico("Atuador " + (i + 1), 50.0));
+        }
     }
 
     /**
@@ -97,6 +118,12 @@ public abstract class Maquina implements Auditavel {
         if (estaQuebrada()) {
             System.out.println("[ERRO] " + nome + " está quebrada.");
             return null;
+        }
+
+        motor.operar();
+        sensor.lerTemperatura(motor.getTemperaturaAtual());
+        for (AtuadorMecanico atuador : atuadores) {
+            atuador.acionar();
         }
 
         if (!estaLigada()) {
@@ -136,6 +163,7 @@ public abstract class Maquina implements Auditavel {
             return;
         }
         status = StatusMaquina.LIGADA;
+        motor.ligar();
         System.out.println("[OK] " + nome + " ligada.");
     }
 
@@ -147,6 +175,7 @@ public abstract class Maquina implements Auditavel {
             return;  // uma máquina quebrada continua quebrada
         }
         status = StatusMaquina.DESLIGADA;
+        motor.desligar();
         System.out.println("[OK] " + nome + " desligada.");
     }
 
@@ -156,12 +185,19 @@ public abstract class Maquina implements Auditavel {
     public void reparar() {
         saude = SAUDE_MAXIMA;
         status = StatusMaquina.DESLIGADA;
-        System.out.println("[OK] " + nome + " foi reparada e está com saúde total.");
+
+        motor.revisar();
+        sensor.calibrar();
+        for (AtuadorMecanico atuador : atuadores) {
+            atuador.lubrificar();
+        }
+        System.out.println("[OK] " + nome + " e suas pecas foram reparadas.");
     }
 
     
     /**
-     * Aplica o desgaste progressivo à máquina após cada uso, diminuindo sua saúde com base no cenário
+     * Aplica o desgaste progressivo à máquina após cada uso, 
+     * diminuindo sua saúde com base no cenário
      */
     private void desgastar() {
         boolean precisavaManutencao = precisaManutencao();
@@ -216,23 +252,39 @@ public abstract class Maquina implements Auditavel {
 
     /**
      * Gera um relatório formatado com os dados e o status atual de operação e saúde da máquina
+     * Faz a auditoria em cascata
      *
-     * @return Uma string contendo o relatório completo de diagnóstico
+     * @return o relatório completo de diagnóstico
      */
     @Override
     public String gerarRelatorioDiagnostico() {
-        return String.format("%s [%s] | Saúde: %.1f/100 | Prob. de falha atual: %.1f%% | Usos: %d | Falhas: %d",
-                nome, status.getDescricao(), saude, getProbabilidadeFalhaEfetiva() * 100, usos, falhas);
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%s [%s] | Saude: %.1f/100 | Falhas: %d",
+                nome, status.getDescricao(), saude, falhas));
+                
+        // Propaga o relatório para as partes internas (formatado hierarquicamente)
+        sb.append("\n    \\_ ").append(motor.gerarRelatorioDiagnostico());
+        sb.append("\n    \\_ ").append(sensor.gerarRelatorioDiagnostico());
+        for (AtuadorMecanico atuador : atuadores) {
+            sb.append("\n    \\_ ").append(atuador.gerarRelatorioDiagnostico());
+        }
+        
+        return sb.toString();
     }
 
     /**
      * Verifica se a máquina necessita de manutenção preventiva com base na sua saúde atual
      *
-     * @return true se a saúde estiver abaixo do limiar de manutenção, false caso contrário
+     * @return true se a saúde estiver abaixo do limiar de manutenção ou das partes que precisam de manutenção,
+     *  false caso contrário
      */
     @Override
     public boolean precisaManutencao() {
-        return saude < limiarManutencao;
+        boolean partesPrecisam = motor.precisaManutencao() || sensor.precisaManutencao();
+        for (AtuadorMecanico atuador : atuadores) {
+            if (atuador.precisaManutencao()) partesPrecisam = true;
+        }
+        return saude < limiarManutencao || partesPrecisam;
     }
 
 
@@ -244,6 +296,14 @@ public abstract class Maquina implements Auditavel {
      */
     public boolean verificarCapacidadeMaquina(double demanda) {
         return demanda <= capacidadeMaxima;
+    }
+
+
+    /**
+     * @return uma cópia imutavel da lista de atuadores
+     */
+    public List<AtuadorMecanico> getAtuadores() {
+        return Collections.unmodifiableList(atuadores);
     }
 
 

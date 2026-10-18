@@ -1,6 +1,11 @@
 package model.maquina;
+import java.util.ArrayList;
+import java.util.List;
+
 import model.Produto;
 import model.enums.Cenario;
+import model.exceptions.StatusIlegalException;
+import model.maquina.componentes.Molde;
 
 /**
  * Representa a máquina responsável por moldar a borracha e fazer virar patinhos
@@ -10,6 +15,9 @@ public class MaquinaMoldagem extends Maquina {
     // Chance da moldagem aumentar o risco de falha do produto, e quanto aumenta
     private static final double CHANCE_AUMENTAR_RISCO = 0.10;
     private static final double AUMENTO_RISCO = 0.10;
+
+    // Componente exclusivo da moldadora
+    private final List<Molde> moldes;
 
     /**
      * Construtor da máquina de moldagem que define os parâmetros padrão e ajusta as probabilidades 
@@ -22,7 +30,14 @@ public class MaquinaMoldagem extends Maquina {
                 50,
                 0.04,
                 15,
-                cenario);
+                cenario,
+                2);
+        
+        // Instancia os 3 moldes específicos
+        this.moldes = new ArrayList<>();
+        this.moldes.add(new Molde("Pato Pequeno"));
+        this.moldes.add(new Molde("Pato Medio"));
+        this.moldes.add(new Molde("Pato Grande"));
     }
 
     /**
@@ -38,12 +53,57 @@ public class MaquinaMoldagem extends Maquina {
 
         produto.processar();
 
+        // Busca o molde correto para o tipo do produto
+        Molde moldeCorreto = selecionarMolde(produto.getTipo());
+        
+        // O molde específico trabalha, sujando e desgastando apenas ele próprio
+        moldeCorreto.injetarEMoldar();
+
         possivelmenteAumentarRisco(produto, CHANCE_AUMENTAR_RISCO, AUMENTO_RISCO,
                 "A moldagem aumentou a probabilidade de falha.");
 
         produto.processado();
 
         return produto;
+    }
+
+    /**
+     * Procura na lista de moldes internos qual é o molde compatível com o produto atual
+     */
+    private Molde selecionarMolde(String tipoProduto) {
+        for (Molde m : moldes) {
+            // Compara o tipo do formato do molde com o tipo do produto.
+            // Para isso, no Molde.java, você precisa ter um getter: getTipoFormato()
+            if (m.getTipoFormato().equals(tipoProduto)) {
+                return m;
+            }
+        }
+        throw new StatusIlegalException("Molde para " + tipoProduto + " não foi encontrado na máquina!");
+    }
+
+    /**
+     * Quando a máquina for reparada, ela limpa todos os moldes
+     */ 
+    @Override
+    public void reparar() {
+        super.reparar();
+        for (Molde m : moldes) {
+            m.limpar();
+        }
+    }
+
+    /** 
+     * A máquina só está boa se ela mesma estiver boa e nenhum molde estiver sujo 
+    */
+    @Override
+    public boolean precisaManutencao() {
+        boolean algumMoldeSujo = false;
+        for (Molde m : moldes) {
+            if (m.precisaManutencao()) {
+                algumMoldeSujo = true;
+            }
+        }
+        return super.precisaManutencao() || algumMoldeSujo;
     }
 
     /**

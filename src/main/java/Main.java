@@ -13,6 +13,7 @@ import model.enums.Cenario;
 import model.maquina.MaquinaEmbalagem;
 import model.maquina.MaquinaInspecao;
 import model.maquina.MaquinaMoldagem;
+import model.LinhaDeProducao;
 import strategy.*;
 import util.EntradaConsole;
 import util.Estilo;
@@ -96,12 +97,13 @@ public class Main {
             // ========================================
             // GERENCIADOR E MÁQUINAS (na ordem da linha de produção)
             // ========================================
-            GerenciadorProducao gerenciador = new GerenciadorProducao(
-                    borracha, cenario, esteira1, esteira2, esteira3, estrategias.get(0));
+            LinhaDeProducao linhaPrincipal = new LinhaDeProducao("Bancada Principal");
+            linhaPrincipal.adicionarMaquina(new MaquinaMoldagem(cenario));
+            linhaPrincipal.adicionarMaquina(new MaquinaEmbalagem(cenario));
+            linhaPrincipal.adicionarMaquina(new MaquinaInspecao(cenario));
 
-            gerenciador.adicionarMaquina(new MaquinaMoldagem(cenario));
-            gerenciador.adicionarMaquina(new MaquinaEmbalagem(cenario));
-            gerenciador.adicionarMaquina(new MaquinaInspecao(cenario));
+            GerenciadorProducao gerenciador = new GerenciadorProducao(
+                    borracha, cenario, esteira1, esteira2, esteira3, estrategias.get(0), linhaPrincipal);
 
             // ========================================
             // MENU
