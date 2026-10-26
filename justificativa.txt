@@ -50,6 +50,13 @@ textos para que descrevam o comportamento real (por exemplo, quais exceções ca
 Exceções de domínio: criamos a PlantaException (base) e as exceções ArgumentoIlegalException, StatusIlegalException, DemandaInexistenteException,
 RecursoInsuficienteException, OrcamentoInsuficienteException e MaquinaIndisponivelException. Mantivemos poucas classes de propósito (KISS),
 cada uma representando um tipo de erro que o usuário pode corrigir de forma diferente.
+
+Na Tarefa 5, refatoramos a arquitetura da fábrica com relações de composição e agregação, sem alterar as regras de negócio:
+Composição: a Maquina passou a ser formada por Partes com responsabilidades próprias: Motor, SensorTemperatura e AtuadorMecanico (1:1, 1:1 e 1:N). A MaquinaMoldagem também possui 3 Moldes. Todas as Partes são criadas no construtor do Todo, sem compartilhamento, e uma Parte desgastada faz a máquina precisar de manutenção.
+Agregação: criamos a LinhaDeProducao, que agrupa as máquinas. Como uma máquina pode ser removida da linha e continuar existindo, a relação é de agregação.
+Encapsulamento: o código externo não acessa as Partes. A Maquina delega as ações a elas, e a linha expõe suas máquinas por lista imutável (Lei de Deméter).
+Auditoria em cascata: o relatório de diagnóstico percorre LinhaDeProducao, Maquina e Partes, em formato hierárquico e indentado.
+UML: o diagrama de classes (diagrama_uml.png/.pdf e .drawio) representa essas relações, de acordo com o código.
 Tratamento de erros: o GerenciadorProducao lança a exceção adequada quando uma regra é violada e o MenuFabrica, que é a camada que fala com o
 usuário, captura PlantaException, mostra uma mensagem clara e volta ao menu. Todas as validações ocorrem antes de alterar estoque, budget ou
 status da demanda, então uma operação que falha não deixa a planta em estado inconsistente. Dentro do laço de produção, a falta de borracha
