@@ -17,4 +17,15 @@ public class PlantaException extends RuntimeException {
     public PlantaException(String mensagem) {
         super(mensagem);
     }
+
+    /**
+     * Cria uma exceção de domínio com a mensagem e a causa original do erro.
+     *
+     * @param mensagem mensagem que descreve o motivo da exceção
+     * @param causa    exceção original que provocou este erro
+     */
+    public PlantaException(String mensagem, Throwable causa) {
+        super(mensagem, causa);
+    }
 }
+
