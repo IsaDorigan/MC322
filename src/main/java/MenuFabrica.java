@@ -1,7 +1,11 @@
 import java.util.List;
 
 import model.MateriaPrima;
+import model.exceptions.ArquivoInexistenteException;
+import model.exceptions.PersistenciaException;
 import model.exceptions.PlantaException;
+import persistence.PersistenciaPlanta;
+import service.GerenciadorProducao;
 import strategy.EstrategiaProducao;
 import util.EntradaConsole;
 import util.Estilo;
@@ -17,9 +21,10 @@ public class MenuFabrica {
     private static final String[] PRODUTOS = {"Pato Pequeno", "Pato Medio", "Pato Grande"};
     private static final int QUANTIDADE_MAXIMA = 1_000_000;
 
-    private final GerenciadorProducao gerenciador;
+    private GerenciadorProducao gerenciador;  // não é final: o carregamento substitui a planta inteira
     private final EntradaConsole entrada;
     private final List<EstrategiaProducao> estrategias;
+    private final PersistenciaPlanta persistencia;
 
     /**
      * Inicializa o menu da fábrica com os utilitários de entrada, o gerenciador principal e as estratégias disponíveis
@@ -27,11 +32,14 @@ public class MenuFabrica {
      * @param gerenciador O controlador central que executa as regras de negócio da fábrica
      * @param entrada     O utilitário responsável pela leitura e validação de dados do console
      * @param estrategias A lista de estratégias de produção que podem ser selecionadas
+     * @param persistencia O componente que salva e carrega o estado da planta em arquivo XML
      */
-    public MenuFabrica(GerenciadorProducao gerenciador, EntradaConsole entrada, List<EstrategiaProducao> estrategias) {
+    public MenuFabrica(GerenciadorProducao gerenciador, EntradaConsole entrada,
+                       List<EstrategiaProducao> estrategias, PersistenciaPlanta persistencia) {
         this.gerenciador = gerenciador;
         this.entrada = entrada;
         this.estrategias = estrategias;
+        this.persistencia = persistencia;
     }
 
     // ============================================
@@ -54,9 +62,11 @@ public class MenuFabrica {
             imprimirOpcao(4, "Comprar materia-prima", "(reabastecer borracha)");
             imprimirOpcao(5, "Gerenciar estrategia", "(trocar a ordem de producao)");
             imprimirOpcao(6, "Auditoria", "(relatorios e reparo de maquinas)");
+            imprimirOpcao(7, "Salvar estado da planta", "(grava em arquivo XML)");
+            imprimirOpcao(8, "Carregar estado da planta", "(substitui o estado atual)");
             imprimirOpcao(0, "Sair");
 
-            opcao = entrada.lerInteiro("ESCOLHA: ", 0, 6);
+            opcao = entrada.lerInteiro("ESCOLHA: ", 0, 8);
 
             switch (opcao) {
                 case 1:
@@ -77,10 +87,16 @@ public class MenuFabrica {
                 case 6:
                     menuAuditoria();
                     break;
+                case 7:
+                    salvarEstado();
+                    break;
+                case 8:
+                    carregarEstado();
+                    break;
                 default:
-                    break;  // 0: sai do laço
+                    break;  // 0: pede confirmação de saída na condição do laço
             }
-        } while (opcao != 0);
+        } while (opcao != 0 || !confirmarSaida());
 
         System.out.println("\nEncerrando a fabrica...");
         System.out.println("Ate a proxima, e que a lagoa esteja sempre tranquila!");
@@ -336,6 +352,61 @@ public class MenuFabrica {
     }
 
     // ============================================
+    // PERSISTÊNCIA (salvar e carregar o estado da planta)
+    // ============================================
+
+    /**
+     * Salva o estado atual da planta. Falhas são mostradas ao usuário e não derrubam o programa.
+     *
+     * @return {@code true} se o estado foi salvo com sucesso
+     */
+    private boolean salvarEstado() {
+        try {
+            persistencia.salvar(gerenciador);
+            System.out.println("[OK] Estado da planta salvo em " + persistencia.getArquivo() + ".");
+            return true;
+        } catch (PlantaException e) {
+            exibirErro(e);
+            return false;
+        }
+    }
+
+    /**
+     * Carrega o estado salvo e, somente se tudo for válido, substitui a planta atual por ele.
+     * Em qualquer falha a planta atual é mantida intacta.
+     */
+    private void carregarEstado() {
+        if (!entrada.lerConfirmacao("O estado atual da planta sera substituido pelo estado salvo. Continuar?")) {
+            System.out.println("Carregamento cancelado. A planta atual foi mantida.");
+            return;
+        }
+        try {
+            gerenciador = persistencia.carregar(estrategias);
+            System.out.println("[OK] Estado da planta carregado de " + persistencia.getArquivo() + ".");
+        } catch (ArquivoInexistenteException e) {
+            exibirErro("Nenhum estado salvo foi encontrado em " + persistencia.getArquivo()
+                    + ".\nUse \"Salvar estado da planta\" para criar um.\nA planta atual foi mantida.");
+        } catch (PersistenciaException e) {
+            exibirErro(e.getMessage() + "\nA planta atual foi mantida, sem alteracoes.");
+        }
+    }
+
+    /**
+     * Oferece salvar o estado antes de encerrar, para que o progresso não se perca.
+     *
+     * @return {@code true} se o programa pode encerrar; {@code false} se o usuário preferiu continuar
+     */
+    private boolean confirmarSaida() {
+        if (!entrada.lerConfirmacao("Deseja salvar o estado da planta antes de sair?")) {
+            return true;
+        }
+        if (salvarEstado()) {
+            return true;
+        }
+        return entrada.lerConfirmacao("Nao foi possivel salvar. Sair mesmo assim?");
+    }
+
+    // ============================================
     // TRATAMENTO DE ERROS
     // ============================================
 
@@ -359,11 +430,20 @@ public class MenuFabrica {
      * @param erro A exceção de domínio cuja mensagem será exibida
      */
     private void exibirErro(PlantaException erro) {
+        exibirErro(erro.getMessage());
+    }
+
+    /**
+     * Exibe uma mensagem de erro em destaque e aguarda o usuário confirmar a leitura
+     *
+     * @param mensagem O texto do erro (pode ter várias linhas)
+     */
+    private void exibirErro(String mensagem) {
         System.out.println();
         System.out.println(Estilo.vermelho(Estilo.linhaDupla()));
         System.out.println(Estilo.vermelho("ERRO"));
         System.out.println(Estilo.vermelho(Estilo.linhaDupla()));
-        System.out.println(erro.getMessage());
+        System.out.println(mensagem);
         System.out.println();
         entrada.lerLinha("Pressione ENTER para continuar...");
     }
