@@ -1,4 +1,6 @@
 package model.maquina;
+
+import model.exceptions.ArgumentoIlegalException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,5 +126,25 @@ public class MaquinaMoldagem extends Maquina {
     @Override
     public String getTipo() {
         return "Moldagem";
+    }
+
+    @Override
+    protected List<Molde.Estado> obterEstadosMoldes() {
+        List<Molde.Estado> estados = new ArrayList<>();
+        for (Molde molde : moldes) {
+            estados.add(molde.obterEstado());
+        }
+        return estados;
+    }
+
+    @Override
+    protected void restaurarEstadosMoldes(List<Molde.Estado> estadosMoldes) {
+        if (estadosMoldes.size() != moldes.size()) {
+            throw new ArgumentoIlegalException("A " + getNome() + " possui " + moldes.size()
+                    + " moldes, mas os dados informam " + estadosMoldes.size() + ".");
+        }
+        for (int i = 0; i < moldes.size(); i++) {
+            moldes.get(i).restaurarEstado(estadosMoldes.get(i));
+        }
     }
 }
