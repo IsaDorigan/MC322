@@ -1,5 +1,6 @@
 package model;
 import model.enums.StatusProduto;
+import model.exceptions.ArgumentoIlegalException;
 
 /**
  * Classe base de todos os patinhos. Implementa Auditavel para que a
@@ -234,6 +235,30 @@ public abstract class Produto implements Auditavel {
      * @param lote O número do lote a ser atribuído
      */
     public void setLote(int lote) {
+        this.lote = lote;
+    }
+
+    /**
+     * Restaura o estado variável do produto a partir de dados persistidos.
+     * Identificação e qualidade são definidas pelo construtor do tipo concreto de pato.
+     *
+     * @param status                      status do produto
+     * @param probabilidadeFalhaAcumulada risco acumulado de falha, entre 0 e 1
+     * @param lote                        número do lote de fabricação (maior ou igual a 0)
+     * @throws ArgumentoIlegalException se o status for nulo, o risco estiver fora de [0, 1] ou o lote for negativo
+     */
+    public void restaurarEstado(StatusProduto status, double probabilidadeFalhaAcumulada, int lote) {
+        if (status == null) {
+            throw new ArgumentoIlegalException("O status do produto #" + id + " nao foi informado.");
+        }
+        if (!(probabilidadeFalhaAcumulada >= 0 && probabilidadeFalhaAcumulada <= 1)) {
+            throw new ArgumentoIlegalException("O risco acumulado do produto #" + id + " deve estar entre 0 e 1.");
+        }
+        if (lote < 0) {
+            throw new ArgumentoIlegalException("O lote do produto #" + id + " nao pode ser negativo.");
+        }
+        this.status = status;
+        this.probabilidadeFalhaAcumulada = probabilidadeFalhaAcumulada;
         this.lote = lote;
     }
 }
