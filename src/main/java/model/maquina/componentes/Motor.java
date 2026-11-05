@@ -1,5 +1,7 @@
 package model.maquina.componentes;
 
+import model.exceptions.ArgumentoIlegalException;
+
 import model.Auditavel;
 import model.exceptions.StatusIlegalException;
 import util.Sorteio;
@@ -96,5 +98,51 @@ public class Motor implements Auditavel {
      */
     public void revisar() {
         this.desgaste = 0.0;
+    }
+
+    /**
+     * Instantâneo imutável do estado variável do motor.
+     * Usado para salvar e restaurar a máquina sem expor o motor ao código externo.
+     *
+     * @param modelo           identificação do modelo do motor
+     * @param ligado           se o motor está ligado
+     * @param desgaste         desgaste acumulado
+     * @param temperaturaAtual temperatura atual, em graus Celsius
+     */
+    public record Estado(String modelo, boolean ligado, double desgaste, double temperaturaAtual) { }
+
+    /**
+     * Obtém uma cópia imutável do estado atual do motor.
+     *
+     * @return o estado atual do motor
+     */
+    public Estado obterEstado() {
+        return new Estado(modelo, ligado, desgaste, temperaturaAtual);
+    }
+
+    /**
+     * Restaura o estado variável do motor a partir de um instantâneo, validando os valores.
+     *
+     * @param estado o estado a ser restaurado
+     * @throws ArgumentoIlegalException se o estado for nulo, de outro modelo de motor ou tiver valores inválidos
+     */
+    public void restaurarEstado(Estado estado) {
+        if (estado == null) {
+            throw new ArgumentoIlegalException("Estado do motor ausente.");
+        }
+        if (!modelo.equals(estado.modelo())) {
+            throw new ArgumentoIlegalException("Motor incompativel: esperado " + modelo
+                    + ", mas os dados informam " + estado.modelo() + ".");
+        }
+        if (!(estado.desgaste() >= 0)) {
+            throw new ArgumentoIlegalException("O desgaste do motor " + modelo + " nao pode ser negativo.");
+        }
+        if (!(estado.temperaturaAtual() >= -273.15)) {
+            throw new ArgumentoIlegalException("Temperatura invalida para o motor " + modelo
+                    + ": abaixo do zero absoluto.");
+        }
+        this.ligado = estado.ligado();
+        this.desgaste = estado.desgaste();
+        this.temperaturaAtual = estado.temperaturaAtual();
     }
 }
