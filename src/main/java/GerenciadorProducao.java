@@ -1,3 +1,5 @@
+package service;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -16,6 +18,7 @@ import model.PatoPequeno;
 import model.Produto;
 import model.enums.Cenario;
 import model.enums.StatusDemanda;
+import model.enums.StatusProduto;
 import model.exceptions.ArgumentoIlegalException;
 import model.exceptions.DemandaInexistenteException;
 import model.exceptions.MaquinaIndisponivelException;
@@ -457,7 +460,7 @@ public class GerenciadorProducao {
      * @param id          O identificador único a ser atribuído ao novo produto
      * @return            O objeto Produto instanciado ou null se o tipo for inválido
      */
-    private Produto criarProduto(String tipoProduto, int id) {
+    public static Produto criarProduto(String tipoProduto, int id) {
         if (tipoProduto.equals("Pato Pequeno")) {
             return new PatoPequeno(id);
         }
@@ -883,5 +886,117 @@ public class GerenciadorProducao {
      */
     public MateriaPrima getMateriaPrima() {
         return materiaPrima;
+    }
+
+    // ===========================
+    // ACESSO DE LEITURA E RESTAURAÇÃO (usados pela persistência)
+    // ===========================
+
+    /**
+     * Obtém a linha de produção da fábrica.
+     *
+     * @return a linha de produção
+     */
+    public LinhaDeProducao getLinhaDeProducao() {
+        return linhaDeProducao;
+    }
+
+    /**
+     * Obtém as esteiras da fábrica, na ordem em que alimentam as máquinas.
+     *
+     * @return lista somente leitura com as esteiras
+     */
+    public List<Esteira> getEsteiras() {
+        return Collections.unmodifiableList(esteiras);
+    }
+
+    /**
+     * Obtém as demandas cadastradas, na ordem da fila.
+     *
+     * @return lista somente leitura com as demandas
+     */
+    public List<Demanda> getDemandas() {
+        return Collections.unmodifiableList(demandas);
+    }
+
+    /**
+     * Obtém os produtos acabados que estão no armazém.
+     *
+     * @return lista somente leitura com os produtos fabricados
+     */
+    public List<Produto> getProdutosFabricados() {
+        return Collections.unmodifiableList(produtosFabricados);
+    }
+
+    /**
+     * Obtém o número que será atribuído ao próximo lote de produção.
+     *
+     * @return o próximo número de lote
+     */
+    public int getProximoLote() {
+        return proximoLote;
+    }
+
+    /**
+     * Obtém o identificador que será atribuído ao próximo produto fabricado.
+     *
+     * @return o próximo identificador de produto
+     */
+    public int getProximoIdProduto() {
+        return proximoIdProduto;
+    }
+
+    /**
+     * Restaura o estado dinâmico da planta (orçamento, contadores, demandas e armazém) a partir de dados
+     * persistidos. Toda a validação acontece antes de qualquer alteração: se algum dado violar as regras
+     * do domínio, uma exceção é lançada e o gerenciador permanece exatamente como estava.
+     *
+     * @param orcamento       orçamento (budget) atual, não negativo
+     * @param proximoLote     próximo número de lote, maior ou igual a 1
+     * @param proximoIdProduto próximo identificador de produto, maior ou igual a 1
+     * @param novasDemandas   demandas já restauradas, na ordem da fila (no máximo uma por tipo de produto)
+     * @param novosProdutos   produtos do armazém já restaurados (INSPECIONADOS, ids únicos e anteriores ao próximo id)
+     * @throws ArgumentoIlegalException se algum contador, o orçamento, as demandas ou os produtos forem inválidos
+     */
+    public void restaurarEstado(double orcamento, int proximoLote, int proximoIdProduto,
+                                List<Demanda> novasDemandas, List<Produto> novosProdutos) {
+        if (!(orcamento >= 0)) {
+            throw new ArgumentoIlegalException("O orcamento nao pode ser negativo.");
+        }
+        if (proximoLote < 1 || proximoIdProduto < 1) {
+            throw new ArgumentoIlegalException("Os contadores de lote e de produto devem ser maiores ou iguais a 1.");
+        }
+        java.util.Set<String> tipos = new java.util.HashSet<>();
+        for (Demanda demanda : novasDemandas) {
+            if (criarProduto(demanda.getTipoProduto(), 0) == null) {
+                throw new ArgumentoIlegalException("Tipo de produto invalido na demanda: " + demanda.getTipoProduto() + ".");
+            }
+            if (!tipos.add(demanda.getTipoProduto())) {
+                throw new ArgumentoIlegalException("Existe mais de uma demanda para " + demanda.getTipoProduto() + ".");
+            }
+        }
+        java.util.Set<Integer> ids = new java.util.HashSet<>();
+        for (Produto produto : novosProdutos) {
+            if (produto.getStatus() != StatusProduto.INSPECIONADO) {
+                throw new ArgumentoIlegalException("O produto #" + produto.getId()
+                        + " esta no armazem, mas nao foi inspecionado (status " + produto.getStatus() + ").");
+            }
+            if (produto.getId() < 1 || produto.getId() >= proximoIdProduto || !ids.add(produto.getId())) {
+                throw new ArgumentoIlegalException("Identificador de produto invalido ou repetido: #" + produto.getId() + ".");
+            }
+            if (produto.getLote() < 1 || produto.getLote() >= proximoLote) {
+                throw new ArgumentoIlegalException("O produto #" + produto.getId() + " pertence a um lote inexistente ("
+                        + produto.getLote() + ").");
+            }
+        }
+
+        this.budget = orcamento;
+        this.proximoLote = proximoLote;
+        this.proximoIdProduto = proximoIdProduto;
+        this.demandas = new ArrayList<>(novasDemandas);
+        this.produtosFabricados = new ArrayList<>(novosProdutos);
+        for (Demanda demanda : this.demandas) {
+            sincronizarEstimativas(demanda);
+        }
     }
 }
