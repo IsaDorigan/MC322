@@ -1,0 +1,8 @@
+# Gerados pelo Gradle / IDE
+build/
+.gradle/
+bin/
+out/
+
+# Estado da planta salvo durante a execucao normal (nao precisa ir na release)
+dados/
