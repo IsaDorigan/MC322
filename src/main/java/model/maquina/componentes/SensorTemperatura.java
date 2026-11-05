@@ -85,4 +85,44 @@ public class SensorTemperatura implements Auditavel {
         return String.format("Sensor de Temperatura %s: [%s] | Leituras desde calibracao: %d", 
                 codigoIdentificacao, status, leiturasRealizadas);
     }
+
+    /**
+     * Instantâneo imutável do estado variável do sensor.
+     *
+     * @param codigoIdentificacao código de identificação do sensor
+     * @param calibrado           se o sensor está calibrado
+     * @param leiturasRealizadas  leituras feitas desde a última calibração
+     */
+    public record Estado(String codigoIdentificacao, boolean calibrado, int leiturasRealizadas) { }
+
+    /**
+     * Obtém uma cópia imutável do estado atual do sensor.
+     *
+     * @return o estado atual do sensor
+     */
+    public Estado obterEstado() {
+        return new Estado(codigoIdentificacao, calibrado, leiturasRealizadas);
+    }
+
+    /**
+     * Restaura o estado variável do sensor a partir de um instantâneo, validando os valores.
+     *
+     * @param estado o estado a ser restaurado
+     * @throws ArgumentoIlegalException se o estado for nulo, de outro sensor ou tiver valores inválidos
+     */
+    public void restaurarEstado(Estado estado) {
+        if (estado == null) {
+            throw new ArgumentoIlegalException("Estado do sensor ausente.");
+        }
+        if (!codigoIdentificacao.equals(estado.codigoIdentificacao())) {
+            throw new ArgumentoIlegalException("Sensor incompativel: esperado " + codigoIdentificacao
+                    + ", mas os dados informam " + estado.codigoIdentificacao() + ".");
+        }
+        if (estado.leiturasRealizadas() < 0) {
+            throw new ArgumentoIlegalException("O numero de leituras do sensor " + codigoIdentificacao
+                    + " nao pode ser negativo.");
+        }
+        this.calibrado = estado.calibrado();
+        this.leiturasRealizadas = estado.leiturasRealizadas();
+    }
 }
