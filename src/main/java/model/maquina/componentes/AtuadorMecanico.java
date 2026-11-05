@@ -1,5 +1,7 @@
 package model.maquina.componentes;
 
+import model.exceptions.ArgumentoIlegalException;
+
 import model.Auditavel;
 import model.exceptions.StatusIlegalException;
 import util.Sorteio;
@@ -71,5 +73,43 @@ public class AtuadorMecanico implements Auditavel {
         String status = precisaManutencao() ? "PRECISA DE LUBRIFICACAO" : "OK";
         return String.format("Atuador Mecanico (%s): [%s] | Ciclos: %d | Forca: %.1fN", 
                 funcao, status, ciclosUso, forcaAplicada);
+    }
+
+    /**
+     * Instantâneo imutável do estado variável do atuador.
+     *
+     * @param funcao        função (identificação) do atuador
+     * @param ciclosUso     ciclos de uso desde a última lubrificação
+     * @param forcaAplicada força aplicada pelo atuador, em newtons
+     */
+    public record Estado(String funcao, int ciclosUso, double forcaAplicada) { }
+
+    /**
+     * Obtém uma cópia imutável do estado atual do atuador.
+     *
+     * @return o estado atual do atuador
+     */
+    public Estado obterEstado() {
+        return new Estado(funcao, ciclosUso, forcaAplicada);
+    }
+
+    /**
+     * Restaura o estado variável do atuador a partir de um instantâneo, validando os valores.
+     *
+     * @param estado o estado a ser restaurado
+     * @throws ArgumentoIlegalException se o estado for nulo, de outro atuador ou tiver valores inválidos
+     */
+    public void restaurarEstado(Estado estado) {
+        if (estado == null) {
+            throw new ArgumentoIlegalException("Estado do atuador ausente.");
+        }
+        if (!funcao.equals(estado.funcao())) {
+            throw new ArgumentoIlegalException("Atuador incompativel: esperado " + funcao
+                    + ", mas os dados informam " + estado.funcao() + ".");
+        }
+        if (estado.ciclosUso() < 0) {
+            throw new ArgumentoIlegalException("Os ciclos de uso do atuador " + funcao + " nao podem ser negativos.");
+        }
+        this.ciclosUso = estado.ciclosUso();
     }
 }
