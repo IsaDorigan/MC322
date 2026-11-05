@@ -1,5 +1,7 @@
 package model.maquina.componentes;
 
+import model.exceptions.ArgumentoIlegalException;
+
 import model.Auditavel;
 import model.exceptions.StatusIlegalException;
 import util.Sorteio;
@@ -95,5 +97,52 @@ public class Molde implements Auditavel {
      */
     public String getTipoFormato() {
         return tipoFormato;
+    }
+
+    /**
+     * Instantâneo imutável do estado variável do molde.
+     *
+     * @param tipoFormato               tipo de pato que o molde produz
+     * @param nivelSujeira              nível de sujeira acumulada
+     * @param desgasteFisico            desgaste físico acumulado
+     * @param pecasMoldadasDesdeLimpeza peças moldadas desde a última limpeza
+     */
+    public record Estado(String tipoFormato, double nivelSujeira, double desgasteFisico,
+                         int pecasMoldadasDesdeLimpeza) { }
+
+    /**
+     * Obtém uma cópia imutável do estado atual do molde.
+     *
+     * @return o estado atual do molde
+     */
+    public Estado obterEstado() {
+        return new Estado(tipoFormato, nivelSujeira, desgasteFisico, pecasMoldadasDesdeLimpeza);
+    }
+
+    /**
+     * Restaura o estado variável do molde a partir de um instantâneo, validando os valores.
+     *
+     * @param estado o estado a ser restaurado
+     * @throws ArgumentoIlegalException se o estado for nulo, de outro molde ou tiver valores inválidos
+     */
+    public void restaurarEstado(Estado estado) {
+        if (estado == null) {
+            throw new ArgumentoIlegalException("Estado do molde ausente.");
+        }
+        if (!tipoFormato.equals(estado.tipoFormato())) {
+            throw new ArgumentoIlegalException("Molde incompativel: esperado " + tipoFormato
+                    + ", mas os dados informam " + estado.tipoFormato() + ".");
+        }
+        if (!(estado.nivelSujeira() >= 0) || !(estado.desgasteFisico() >= 0)) {
+            throw new ArgumentoIlegalException("Sujeira e desgaste do molde de " + tipoFormato
+                    + " nao podem ser negativos.");
+        }
+        if (estado.pecasMoldadasDesdeLimpeza() < 0) {
+            throw new ArgumentoIlegalException("As pecas moldadas do molde de " + tipoFormato
+                    + " nao podem ser negativas.");
+        }
+        this.nivelSujeira = estado.nivelSujeira();
+        this.desgasteFisico = estado.desgasteFisico();
+        this.pecasMoldadasDesdeLimpeza = estado.pecasMoldadasDesdeLimpeza();
     }
 }
