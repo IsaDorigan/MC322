@@ -1,3 +1,4 @@
+import java.nio.file.Path;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -14,6 +15,9 @@ import model.maquina.MaquinaEmbalagem;
 import model.maquina.MaquinaInspecao;
 import model.maquina.MaquinaMoldagem;
 import model.LinhaDeProducao;
+import model.exceptions.PlantaException;
+import persistence.PersistenciaPlanta;
+import service.GerenciadorProducao;
 import strategy.*;
 import util.EntradaConsole;
 import util.Estilo;
@@ -35,6 +39,8 @@ public class Main {
     private static final double RESERVA_MINIMA_BORRACHA = 5.0; 
     /** Preço da borracha por quilograma. */
     private static final double PRECO_BORRACHA_POR_KG = 5.0;
+    /** Arquivo XML onde o estado da planta é salvo, relativo à pasta de execução (ignorado pelo git). */
+    private static final Path ARQUIVO_PERSISTENCIA = Path.of("dados", "planta.xml");
 
     /**
      * Ponto de entrada do programa, responsável por configurar o console em UTF-8, inicializar os componentes e iniciar o menu principal
@@ -64,26 +70,9 @@ public class Main {
             imprimirBoasVindas();
 
             // ========================================
-            // SEMENTE E CENÁRIO (escolhidos no início)
+            // SEMENTE (escolhida no início)
             // ========================================
             configurarSemente(entrada);
-            Cenario cenario = escolherCenario(entrada);
-
-            // ========================================
-            // MATÉRIA-PRIMA E ESTEIRAS
-            // ========================================
-            MateriaPrima borracha = new MateriaPrima(
-                    1,
-                    "Borracha",
-                    cenario.getEstoqueInicialBorracha(),
-                    "kg",
-                    PRECO_BORRACHA_POR_KG,
-                    RESERVA_MINIMA_BORRACHA
-            );
-
-            Esteira esteira1 = new Esteira(100, 1); // Matéria prima até moldagem
-            Esteira esteira2 = new Esteira(100, 2); // Produto da moldagem até embalagem
-            Esteira esteira3 = new Esteira(100, 3); // embalagem para inspeção
 
             // ========================================
             // ESTRATÉGIAS (só o Main conhece as classes concretas)
@@ -95,24 +84,85 @@ public class Main {
             );
 
             // ========================================
-            // GERENCIADOR E MÁQUINAS (na ordem da linha de produção)
+            // PLANTA: carrega o estado salvo ou cria uma nova
             // ========================================
-            LinhaDeProducao linhaPrincipal = new LinhaDeProducao("Bancada Principal");
-            linhaPrincipal.adicionarMaquina(new MaquinaMoldagem(cenario));
-            linhaPrincipal.adicionarMaquina(new MaquinaEmbalagem(cenario));
-            linhaPrincipal.adicionarMaquina(new MaquinaInspecao(cenario));
-
-            GerenciadorProducao gerenciador = new GerenciadorProducao(
-                    borracha, cenario, esteira1, esteira2, esteira3, estrategias.get(0), linhaPrincipal);
+            PersistenciaPlanta persistencia = new PersistenciaPlanta(ARQUIVO_PERSISTENCIA);
+            GerenciadorProducao gerenciador = carregarEstadoSalvo(persistencia, estrategias);
+            if (gerenciador == null) {
+                gerenciador = criarPlantaNova(entrada, estrategias);
+            }
 
             // ========================================
             // MENU
             // ========================================
-            new MenuFabrica(gerenciador, entrada, estrategias).executar();
+            new MenuFabrica(gerenciador, entrada, estrategias, persistencia).executar();
 
         } catch (NoSuchElementException e) {
             System.out.println("\nEntrada encerrada. Fabrica desligada. Ate a proxima!");
         }
+    }
+
+    /**
+     * Tenta recuperar o estado salvo em uma execução anterior.
+     * A ausência do arquivo é uma situação normal (primeira execução) e apenas inicia uma planta nova.
+     * Se o arquivo existir mas estiver inválido, o problema é mostrado e também se inicia uma planta nova;
+     * o arquivo defeituoso só é sobrescrito se o usuário salvar depois.
+     *
+     * @param persistencia o componente de persistência
+     * @param estrategias  as estratégias disponíveis, entre as quais se escolhe a salva
+     * @return a planta recuperada, ou {@code null} se for preciso criar uma planta nova
+     */
+    private static GerenciadorProducao carregarEstadoSalvo(PersistenciaPlanta persistencia,
+                                                           List<EstrategiaProducao> estrategias) {
+        if (!persistencia.arquivoExiste()) {
+            System.out.println("\nNenhum estado salvo encontrado. Iniciando uma planta nova.");
+            return null;
+        }
+        try {
+            GerenciadorProducao gerenciador = persistencia.carregar(estrategias);
+            System.out.println("[OK] Estado anterior da planta recuperado de " + persistencia.getArquivo() + ".");
+            return gerenciador;
+        } catch (PlantaException e) {
+            System.out.println();
+            System.out.println(Estilo.vermelho("[ERRO] Nao foi possivel recuperar o estado salvo."));
+            System.out.println(e.getMessage());
+            System.out.println("Iniciando uma planta nova. O arquivo " + persistencia.getArquivo()
+                    + " so sera substituido se voce salvar o estado.");
+            return null;
+        }
+    }
+
+    /**
+     * Cria uma planta nova com os dados padrão do projeto, após o usuário escolher o cenário.
+     *
+     * @param entrada     o utilitário de leitura do console
+     * @param estrategias as estratégias disponíveis (a primeira é a inicial)
+     * @return a planta nova
+     */
+    private static GerenciadorProducao criarPlantaNova(EntradaConsole entrada, List<EstrategiaProducao> estrategias) {
+        Cenario cenario = escolherCenario(entrada);
+
+        MateriaPrima borracha = new MateriaPrima(
+                1,
+                "Borracha",
+                cenario.getEstoqueInicialBorracha(),
+                "kg",
+                PRECO_BORRACHA_POR_KG,
+                RESERVA_MINIMA_BORRACHA
+        );
+
+        Esteira esteira1 = new Esteira(100, 1); // Matéria prima até moldagem
+        Esteira esteira2 = new Esteira(100, 2); // Produto da moldagem até embalagem
+        Esteira esteira3 = new Esteira(100, 3); // embalagem para inspeção
+
+        // Máquinas na ordem da linha de produção
+        LinhaDeProducao linhaPrincipal = new LinhaDeProducao("Bancada Principal");
+        linhaPrincipal.adicionarMaquina(new MaquinaMoldagem(cenario));
+        linhaPrincipal.adicionarMaquina(new MaquinaEmbalagem(cenario));
+        linhaPrincipal.adicionarMaquina(new MaquinaInspecao(cenario));
+
+        return new GerenciadorProducao(
+                borracha, cenario, esteira1, esteira2, esteira3, estrategias.get(0), linhaPrincipal);
     }
 
     /**
