@@ -99,4 +99,24 @@ public class EntradaConsole {
             }
         }
     }
+
+    /**
+     * Pergunta e lê uma confirmação de sim ou não. A leitura se repete até o usuário responder
+     * {@code s} ou {@code n} (também aceita {@code sim} e {@code nao}, sem diferenciar maiúsculas)
+     *
+     * @param prompt O texto da pergunta (a indicação "(s/n)" é acrescentada automaticamente)
+     * @return       {@code true} para sim e {@code false} para não
+     */
+    public boolean lerConfirmacao(String prompt) {
+        while (true) {
+            String texto = lerLinha(prompt + " (s/n): ").toLowerCase();
+            if (texto.equals("s") || texto.equals("sim")) {
+                return true;
+            }
+            if (texto.equals("n") || texto.equals("nao") || texto.equals("não")) {
+                return false;
+            }
+            System.out.println("[ERRO] Responda com s ou n.");
+        }
+    }
 }
