@@ -29,9 +29,17 @@ public class MateriaPrima {
      * @param unidade          A unidade de medida utilizada para este insumo
      * @param custoPorUnidade  O valor financeiro de cada unidade do insumo
      * @param quantidadeMinima A reserva de segurança que nunca pode ser consumida
+     * @throws ArgumentoIlegalException se o nome ou a unidade forem vazios ou se quantidade, custo ou reserva forem negativos
      */
     public MateriaPrima(int id, String nome, double quantidade, String unidade,
                         double custoPorUnidade, double quantidadeMinima) {
+        if (nome == null || nome.isBlank() || unidade == null || unidade.isBlank()) {
+            throw new ArgumentoIlegalException("Nome e unidade da materia-prima nao podem ser vazios.");
+        }
+        if (!(quantidade >= 0) || !(custoPorUnidade >= 0) || !(quantidadeMinima >= 0)) {
+            throw new ArgumentoIlegalException("Quantidade, custo e reserva minima da materia-prima " + nome
+                    + " nao podem ser negativos.");
+        }
         this.id = id;
         this.nome = nome;
         this.quantidade = quantidade;
