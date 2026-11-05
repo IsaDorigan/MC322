@@ -1,5 +1,9 @@
 package model.maquina;
 
+import model.maquina.componentes.Molde;
+
+import model.exceptions.ArgumentoIlegalException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -405,6 +409,121 @@ public abstract class Maquina implements Auditavel {
     public void setLimiarManutencao(double limiarManutencao) {
         if (limiarManutencao >= 0 && limiarManutencao <= SAUDE_MAXIMA) {
             this.limiarManutencao = limiarManutencao;
+        }
+    }
+
+    // PERSISTÊNCIA (estado como instantâneo imutável: as Partes continuam encapsuladas)
+
+    /**
+     * Instantâneo imutável do estado variável da máquina e de todos os seus subcomponentes.
+     * A configuração fixa (capacidade, custos, probabilidade base) não faz parte do estado,
+     * pois é reconstruída pelo construtor a partir do tipo da máquina e do cenário.
+     *
+     * @param nome             nome da máquina
+     * @param status           status operacional
+     * @param saude            saúde atual (0 a 100)
+     * @param limiarManutencao saúde abaixo da qual a máquina pede manutenção
+     * @param usos             total de usos
+     * @param falhas           total de falhas
+     * @param motor            estado do motor
+     * @param sensor           estado do sensor de temperatura
+     * @param atuadores        estado dos atuadores, na ordem de instalação
+     * @param moldes           estado dos moldes (vazio nas máquinas que não possuem moldes)
+     */
+    public record Estado(String nome, StatusMaquina status, double saude, double limiarManutencao,
+                         int usos, int falhas, Motor.Estado motor, SensorTemperatura.Estado sensor,
+                         List<AtuadorMecanico.Estado> atuadores, List<Molde.Estado> moldes) { }
+
+    /**
+     * Obtém uma cópia imutável do estado atual da máquina e de suas partes.
+     *
+     * @return o estado atual da máquina
+     */
+    public Estado obterEstado() {
+        List<AtuadorMecanico.Estado> estadosAtuadores = new ArrayList<>();
+        for (AtuadorMecanico atuador : atuadores) {
+            estadosAtuadores.add(atuador.obterEstado());
+        }
+        return new Estado(nome, status, saude, limiarManutencao, usos, falhas,
+                motor.obterEstado(), sensor.obterEstado(),
+                Collections.unmodifiableList(estadosAtuadores),
+                Collections.unmodifiableList(obterEstadosMoldes()));
+    }
+
+    /**
+     * Restaura o estado da máquina e de suas partes a partir de um instantâneo.
+     * Todas as regras do domínio são verificadas; em caso de erro, a máquina deve ser descartada.
+     *
+     * @param estado o estado a ser restaurado
+     * @throws ArgumentoIlegalException se o estado for nulo, pertencer a outra máquina, tiver valores fora
+     *                                  das regras do domínio ou não corresponder à composição da máquina
+     */
+    public void restaurarEstado(Estado estado) {
+        if (estado == null) {
+            throw new ArgumentoIlegalException("Estado da maquina ausente.");
+        }
+        if (!nome.equals(estado.nome())) {
+            throw new ArgumentoIlegalException("Maquina incompativel: esperado " + nome
+                    + ", mas os dados informam " + estado.nome() + ".");
+        }
+        if (estado.status() == null) {
+            throw new ArgumentoIlegalException("Status da maquina " + nome + " ausente.");
+        }
+        if (!(estado.saude() >= 0 && estado.saude() <= SAUDE_MAXIMA)) {
+            throw new ArgumentoIlegalException("A saude da " + nome + " deve estar entre 0 e " + SAUDE_MAXIMA + ".");
+        }
+        if (!(estado.limiarManutencao() >= 0 && estado.limiarManutencao() <= SAUDE_MAXIMA)) {
+            throw new ArgumentoIlegalException("O limiar de manutencao da " + nome + " deve estar entre 0 e "
+                    + SAUDE_MAXIMA + ".");
+        }
+        if (estado.usos() < 0 || estado.falhas() < 0 || estado.falhas() > estado.usos()) {
+            throw new ArgumentoIlegalException("Usos e falhas da " + nome
+                    + " invalidos (nao negativos e com falhas <= usos).");
+        }
+        if ((estado.status() == StatusMaquina.QUEBRADA) != (estado.saude() <= 0)) {
+            throw new ArgumentoIlegalException("A " + nome + " so pode estar QUEBRADA com saude zero (e vice-versa).");
+        }
+        if (estado.atuadores() == null || estado.atuadores().size() != atuadores.size()) {
+            throw new ArgumentoIlegalException("A " + nome + " possui " + atuadores.size()
+                    + " atuador(es), mas os dados informam "
+                    + (estado.atuadores() == null ? 0 : estado.atuadores().size()) + ".");
+        }
+
+        motor.restaurarEstado(estado.motor());
+        sensor.restaurarEstado(estado.sensor());
+        for (int i = 0; i < atuadores.size(); i++) {
+            atuadores.get(i).restaurarEstado(estado.atuadores().get(i));
+        }
+        restaurarEstadosMoldes(estado.moldes() == null ? List.of() : estado.moldes());
+
+        this.status = estado.status();
+        this.saude = estado.saude();
+        this.limiarManutencao = estado.limiarManutencao();
+        this.usos = estado.usos();
+        this.falhas = estado.falhas();
+    }
+
+    /**
+     * Estados dos moldes da máquina. Por padrão a máquina não possui moldes;
+     * subclasses com moldes sobrescrevem este método.
+     *
+     * @return lista com o estado de cada molde (vazia por padrão)
+     */
+    protected List<Molde.Estado> obterEstadosMoldes() {
+        return new ArrayList<>();
+    }
+
+    /**
+     * Restaura os moldes da máquina. Por padrão a máquina não possui moldes,
+     * portanto qualquer molde informado é incompatível.
+     *
+     * @param estadosMoldes estados dos moldes a restaurar
+     * @throws ArgumentoIlegalException se forem informados moldes para uma máquina que não os possui
+     */
+    protected void restaurarEstadosMoldes(List<Molde.Estado> estadosMoldes) {
+        if (!estadosMoldes.isEmpty()) {
+            throw new ArgumentoIlegalException("A " + nome + " nao possui moldes, mas os dados informam "
+                    + estadosMoldes.size() + ".");
         }
     }
 }
