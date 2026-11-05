@@ -224,4 +224,35 @@ public class Demanda {
     public boolean isAtendida() {
         return status == StatusDemanda.CONCLUIDA;
     }
+
+    /**
+     * Restaura a quantidade e o status da demanda a partir de dados persistidos, respeitando as
+     * invariantes do domínio: uma demanda PENDENTE tem quantidade positiva, uma CONCLUIDA tem
+     * quantidade zero e nenhuma demanda pode ser restaurada EM_PRODUCAO (a produção é concluída
+     * dentro de uma única operação, então esse estado nunca é estável).
+     *
+     * @param quantidade quantidade de produtos ainda por produzir
+     * @param status     status da demanda
+     * @throws ArgumentoIlegalException se a quantidade for negativa, o status for nulo ou a combinação for incoerente
+     * @throws StatusIlegalException    se o status for EM_PRODUCAO
+     */
+    public void restaurarEstado(int quantidade, StatusDemanda status) {
+        if (quantidade < 0) {
+            throw new ArgumentoIlegalException("A quantidade da demanda de " + tipoProduto + " nao pode ser negativa.");
+        }
+        if (status == null) {
+            throw new ArgumentoIlegalException("O status da demanda de " + tipoProduto + " nao foi informado.");
+        }
+        if (status == StatusDemanda.EM_PRODUCAO) {
+            throw new StatusIlegalException("Uma demanda EM_PRODUCAO nao pode ser restaurada (" + tipoProduto + ").");
+        }
+        if (status == StatusDemanda.PENDENTE && quantidade == 0) {
+            throw new ArgumentoIlegalException("A demanda PENDENTE de " + tipoProduto + " deve ter quantidade maior que zero.");
+        }
+        if (status == StatusDemanda.CONCLUIDA && quantidade != 0) {
+            throw new ArgumentoIlegalException("A demanda CONCLUIDA de " + tipoProduto + " deve ter quantidade zero.");
+        }
+        this.quantidadeProdutos = quantidade;
+        this.status = status;
+    }
 }
