@@ -1,4 +1,6 @@
 package model;
+
+import model.exceptions.ArgumentoIlegalException;
 /**
  * Representa uma esteira de transporte da fábrica, responsável por movimentar
  * produtos e matérias-primas entre as estações e máquinas
@@ -18,8 +20,12 @@ public class Esteira {
      *
      * @param capacidadeMaxima O peso ou volume máximo que a esteira suporta
      * @param numero           O número de identificação único desta esteira
+     * @throws ArgumentoIlegalException se a capacidade não for positiva
      */
     public Esteira(double capacidadeMaxima, int numero) {
+        if (!(capacidadeMaxima > 0)) {
+            throw new ArgumentoIlegalException("A capacidade da esteira " + numero + " deve ser maior que zero.");
+        }
         this.capacidadeMaxima = capacidadeMaxima;
         this.emMovimento = false;
         this.item = null;
@@ -136,5 +142,14 @@ public class Esteira {
      */
     public int getNumero() {
         return numero;
+    }
+
+    /**
+     * Retorna a capacidade máxima de carga da esteira.
+     *
+     * @return a capacidade máxima da esteira
+     */
+    public double getCapacidadeMaxima() {
+        return capacidadeMaxima;
     }
 }
