@@ -64,6 +64,7 @@ public abstract class Maquina implements Auditavel {
      * @param probabilidadeFalhaBase A probabilidade de falha com saúde a 100%
      * @param custoOperacao          O custo debitado por cada uso da máquina
      * @param cenario                O cenário atual (afeta multiplicadores de desgaste e falha)
+     * @param qtdAtuadores           A quantidade de atuadores mecânicos da máquina
      */
     public Maquina(String nome, double capacidadeMaxima, double probabilidadeFalhaBase,
                    double custoOperacao, Cenario cenario, int qtdAtuadores) {
@@ -304,6 +305,8 @@ public abstract class Maquina implements Auditavel {
 
 
     /**
+     * Obtem a lista de atuadores da maquina
+     * 
      * @return uma cópia imutavel da lista de atuadores
      */
     public List<AtuadorMecanico> getAtuadores() {

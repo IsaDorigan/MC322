@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="service.GerenciadorProducaoTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-06T00:18:21.649Z" hostname="BOOK-HD9BSDUBQC" time="0.004">
+  <properties/>
+  <testcase name="testRegistrarDemandaAumentaFila()" classname="service.GerenciadorProducaoTest" time="0.001"/>
+  <testcase name="testCompraDeMateriaPrimaDescontaBudget()" classname="service.GerenciadorProducaoTest" time="0.002"/>
+  <system-out><![CDATA[[OK] Moldadora de Patinhos instalada na Bancada Teste.
+[OK] Embaladora de Patinhos instalada na Bancada Teste.
+[OK] Maquina de Inspecao instalada na Bancada Teste.
+[OK] Demanda registrada para Pato Pequeno.
+[OK] Moldadora de Patinhos instalada na Bancada Teste.
+[OK] Embaladora de Patinhos instalada na Bancada Teste.
+[OK] Maquina de Inspecao instalada na Bancada Teste.
+[OK] Novo lote de Borracha recebido! Estoque atualizado para: 210,00 kg
+[OK] Compra realizada.
+Valor pago: R$ 50,00
+Budget restante: R$ 9950,00
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

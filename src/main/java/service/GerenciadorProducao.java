@@ -62,6 +62,7 @@ public class GerenciadorProducao {
      * @param esteira2          A segunda esteira da linha de produção
      * @param esteira3          A terceira esteira da linha de produção
      * @param estrategiaInicial A estratégia inicial adotada para seleção de demandas
+     * @param linhaDeProducao   A linha de produção vinculada ao gerenciador
      */
     public GerenciadorProducao(MateriaPrima materiaPrima, Cenario cenario,
                                Esteira esteira1, Esteira esteira2, Esteira esteira3,

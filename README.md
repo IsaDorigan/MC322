@@ -98,6 +98,21 @@ planta versao="1"
   armazem/produto              (id, tipo, lote, status, probabilidadeFalhaAcumulada)
 ```
 
-**Não é salvo:** a semente do sorteio, o item sobre uma esteira (sempre vazia entre operações) e as estimativas de
-consumo/custo das demandas (recalculadas ao carregar). A configuração fixa das máquinas (capacidade, custos, probabilidade
-base de falha) também não é salva, pois é reconstruída a partir do tipo da máquina e do cenário.
+## Escopo e Limitações
+
+### Dados Persistidos vs. Não Persistidos
+**Persistidos (Salvos no XML):** 
+Salvamos o estoque de matéria-prima, a configuração da infraestrutura (esteiras), as máquinas com o estado de suas peças internas (motor, sensor, atuadores e moldes), as demandas cadastradas e os produtos no armazém. Isso é o essencial para restaurar o estado útil da fábrica.
+
+**Não Persistidos:**
+- **Itens na esteira:** Representam um transporte em andamento (estado instável). Salvr eles viola a uma premissa da produção.
+- **Estimativas de consumo/custo e configurações fixas das máquinas:** São dados calculados dinamicamente ou inerentes ao construtor da máquina e ao cenário. Não salvamos para evitar redundância e inconsistência.
+- **Semente (Seed) do Sorteio:** É uma configuração da execução atual, e não uma propriedade física da planta.
+
+### Explicação da Suíte de Testes
+Os testes automatizados utilizam JUnit 5 de forma isolada, garantindo a integridade do sistema em 4 frentes:
+
+- **`MateriaPrimaTest`:** Valida regras de negócio, como o bloqueio de consumo abaixo da reserva mínima 
+- **`DemandaTest`:** Verifica o ciclo de vida dos pedidos, garantindo transições corretas de status .
+- **`GerenciadorProducaoTest`:** Testa o fluxo de produção, como o registro de demandas na fila e o desconto correto do orçamento (budget) ao comprar insumos.
+- **`PersistenciaPlantaTest`:** Focado na leitura e escrita em arquivos isolados , garante que os valores exatos são preservados no recarregamento da fábrica e verifica se o sistema lança `DadosInvalidosException` e `ArquivoInexistenteException` ao enfrentar XMLs corrompidos ou caminhos falsos.

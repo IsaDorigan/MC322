@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html","k":"18"},{"l":"model"},{"l":"model.enums"},{"l":"model.exceptions"},{"l":"model.maquina"},{"l":"strategy"},{"l":"util"}];updateSearchResults();

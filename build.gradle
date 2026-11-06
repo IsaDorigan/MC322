@@ -26,3 +26,24 @@ tasks.withType(JavaCompile).configureEach {
 tasks.withType(Javadoc).configureEach {
     options.encoding = 'UTF-8'
 }
+
+repositories {
+    mavenCentral()
+}
+
+// Permite a implementação do JUnit
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform() // Obriga o Gradle a usar a plataforma do JUnit 
+    
+    // Opcional: Melhora a visualização no terminal (mostra quais testes passaram ou falharam)
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+

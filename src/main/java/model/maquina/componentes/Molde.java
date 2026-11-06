@@ -93,6 +93,8 @@ public class Molde implements Auditavel {
     }
 
     /**
+     * Obtem o formato produzido pelo molde
+     * 
      * @return o formato do molde
      */
     public String getTipoFormato() {

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="persistence.PersistenciaPlantaTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-06T00:18:21.503Z" hostname="BOOK-HD9BSDUBQC" time="0.145">
+  <properties/>
+  <testcase name="testSalvarECarregarPreservaDados()" classname="persistence.PersistenciaPlantaTest" time="0.123"/>
+  <testcase name="testCarregarArquivoCorrompidoLancaExcecao()" classname="persistence.PersistenciaPlantaTest" time="0.009"/>
+  <testcase name="testCarregarArquivoInexistenteLancaExcecao()" classname="persistence.PersistenciaPlantaTest" time="0.003"/>
+  <system-out><![CDATA[[OK] Moldadora de Patinhos instalada na Linha 1.
+[OK] Embaladora de Patinhos instalada na Linha 1.
+[OK] Maquina de Inspecao instalada na Linha 1.
+[OK] Demanda registrada para Pato Grande.
+[OK] Moldadora de Patinhos instalada na Linha 1.
+[OK] Embaladora de Patinhos instalada na Linha 1.
+[OK] Maquina de Inspecao instalada na Linha 1.
+[OK] Moldadora de Patinhos instalada na Linha 1.
+[OK] Embaladora de Patinhos instalada na Linha 1.
+[OK] Maquina de Inspecao instalada na Linha 1.
+[OK] Demanda registrada para Pato Grande.
+[OK] Moldadora de Patinhos instalada na Linha 1.
+[OK] Embaladora de Patinhos instalada na Linha 1.
+[OK] Maquina de Inspecao instalada na Linha 1.
+[OK] Demanda registrada para Pato Grande.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
