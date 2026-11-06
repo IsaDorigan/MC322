@@ -31,17 +31,18 @@ repositories {
     mavenCentral()
 }
 
-// Permite a implementação do JUnit
+// Adiciona as dependências necessárias para a implementação e execução dos testes com JUnit 5
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+// Configuração da tarefa de testes do Gradle
 test {
     useJUnitPlatform() // Obriga o Gradle a usar a plataforma do JUnit 
     
-    // Opcional: Melhora a visualização no terminal (mostra quais testes passaram ou falharam)
+    // Melhora a visualização no terminal (mostra quais testes passaram ou falharam)
     testLogging {
         events "passed", "skipped", "failed"
     }

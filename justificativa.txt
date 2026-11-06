@@ -61,3 +61,8 @@ Tratamento de erros: o GerenciadorProducao lança a exceção adequada quando um
 usuário, captura PlantaException, mostra uma mensagem clara e volta ao menu. Todas as validações ocorrem antes de alterar estoque, budget ou
 status da demanda, então uma operação que falha não deixa a planta em estado inconsistente. Dentro do laço de produção, a falta de borracha
 passou a ser tratada com try/catch, encerrando o lote e preservando o que já foi produzido.
+
+Na tarefa 6, implementamos a persistencia do estato da fábrica em arquivos XML, e criamos 
+diversos testes autoatizados com o JUnit5. A arquitetura garantiu o isolamento salvando e carregando
+dados essenciais de estoque, infraestrutura, maquinas e demandas, protegendo o sistema com validações
+contra arquivos corrompidos ou inexistentes, além de contar com testes validados via diretórios temporários (@TempDir)
